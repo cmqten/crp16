@@ -43,8 +43,8 @@ module crp16_alu(x, y, select, alu_out, v, c, n, z);
     wire [15:0] ar_ls_out;
     mux_2_to_1 #(16) ar_logshift(adder_out, ls_out, select[3], ar_ls_out);
     
-    assign c = c_out;
-    assign z = | ar_ls_out;
+    assign c = c_out & ~select[3];
+    assign z = ~(| ar_ls_out);
     assign alu_out = ar_ls_out;
 endmodule
 
