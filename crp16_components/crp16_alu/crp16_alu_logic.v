@@ -2,7 +2,7 @@
 `define CRP16_ALU_LOGIC
 `include "../../crp16_subcomponents/mux_2_to_1/mux_2_to_1.v"
 
-/*
+/**
  * The logic part of the ALU
  * x, y : operands
  * select : operator select

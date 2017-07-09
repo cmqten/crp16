@@ -2,7 +2,7 @@
 `define CRP16_ALU_ADDER
 `include "../../crp16_subcomponents/full_adder/full_adder.v"
 
-/*
+/**
  * A 16-bit full adder/subtractor
  * x, y : operands 
  * sub : 0 to add, 1 to subtract
