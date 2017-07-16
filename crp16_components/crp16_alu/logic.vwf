@@ -1141,8 +1141,7 @@ TRANSITION_LIST("select[3]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 1 FOR 80.0;
-		LEVEL 0 FOR 20.0;
+		LEVEL 0 FOR 100.0;
 	}
 }
 
@@ -1151,7 +1150,7 @@ TRANSITION_LIST("select[2]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 100.0;
+		LEVEL 1 FOR 100.0;
 	}
 }
 

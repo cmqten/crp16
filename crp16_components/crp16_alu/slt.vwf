@@ -817,7 +817,7 @@ TRANSITION_LIST("select[3]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL 1 FOR 800.0;
 	}
 }
 
@@ -826,9 +826,7 @@ TRANSITION_LIST("select[2]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 1 FOR 639.0;
-		LEVEL 0 FOR 1.0;
-		LEVEL 1 FOR 160.0;
+		LEVEL 1 FOR 800.0;
 	}
 }
 
@@ -837,9 +835,7 @@ TRANSITION_LIST("select[1]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 1 FOR 639.0;
-		LEVEL 0 FOR 1.0;
-		LEVEL 1 FOR 160.0;
+		LEVEL 1 FOR 800.0;
 	}
 }
 
@@ -848,9 +844,7 @@ TRANSITION_LIST("select[0]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 1 FOR 639.0;
-		LEVEL 0 FOR 1.0;
-		LEVEL 1 FOR 160.0;
+		LEVEL 0 FOR 800.0;
 	}
 }
 
