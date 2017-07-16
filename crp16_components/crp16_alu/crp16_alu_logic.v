@@ -7,6 +7,12 @@
  * x, y : operands
  * select : operator select
  * out : output
+ *
+ * Select bits:
+ * 00: AND
+ * 01: OR
+ * 10: NOT
+ * 11: XOR
  */
 module crp16_alu_logic(x, y, select, out);
     input [15:0] x;
