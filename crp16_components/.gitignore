@@ -1,4 +1,5 @@
 */*
 !*/*.v
 !*/*.vwf
+!*/vwf
 !.gitignore
