@@ -23,9 +23,9 @@ module demux_1_to_4(in, select, out_w, out_x, out_y, out_z);
     output [(bits-1):0] out_z;
     
     wire [(bits-1):0] l1_to_l2[0:1]; // From level 1 demux to level 2 demuxes
-    demux_1_to_2 #(bits) l1(in, select[0], l1_to_l2[0], l1_to_l2[1]);
-    demux_1_to_2 #(bits) l2_a(l1_to_l2[0], select[1], out_w, out_x);
-    demux_1_to_2 #(bits) l2_b(l1_to_l2[1], select[1], out_y, out_z);
+    demux_1_to_2 #(bits) l1(in, select[1], l1_to_l2[0], l1_to_l2[1]);
+    demux_1_to_2 #(bits) l2_a(l1_to_l2[0], select[0], out_w, out_x);
+    demux_1_to_2 #(bits) l2_b(l1_to_l2[1], select[0], out_y, out_z);
 endmodule
 
 `endif
