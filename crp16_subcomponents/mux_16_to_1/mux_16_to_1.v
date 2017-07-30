@@ -31,17 +31,15 @@ module mux_16_to_1(a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, select, out);
     output [(bits - 1):0] out;
     
     // Wires from the 1st level to the second level muxes
-    wire l1_a_l2;
-    wire l1_b_l2;
-    wire l1_c_l2;
-    wire l1_d_l2;
-    mux_4_to_1 #(bits) l1_a(a, b, c, d, select[1:0], l1_a_l2);
-    mux_4_to_1 #(bits) l1_b(e, f, g, h, select[1:0], l1_b_l2);
-    mux_4_to_1 #(bits) l1_c(i, j, k, l, select[1:0], l1_c_l2);
-    mux_4_to_1 #(bits) l1_d(m, n, o, p, select[1:0], l1_d_l2);
+    wire [(bits - 1):0] l1_to_l2[0:3];
+    mux_4_to_1 #(bits) l1_a(a, b, c, d, select[1:0], l1_to_l2[0]);
+    mux_4_to_1 #(bits) l1_b(e, f, g, h, select[1:0], l1_to_l2[1]);
+    mux_4_to_1 #(bits) l1_c(i, j, k, l, select[1:0], l1_to_l2[2]);
+    mux_4_to_1 #(bits) l1_d(m, n, o, p, select[1:0], l1_to_l2[3]);
     
     // Second level mux
-    mux_4_to_1 #(bits) l2(l1_a_l2, l1_b_l2, l1_c_l2, l1_d_l2, select[3:2], out);
+    mux_4_to_1 #(bits) l2(l1_to_l2[0], l1_to_l2[1], l1_to_l2[2], l1_to_l2[3], 
+        select[3:2], out);
 endmodule
 
 `endif
