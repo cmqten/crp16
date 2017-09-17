@@ -26,8 +26,8 @@ module crp16_alu_logic(x, y, select, out);
     // and/or mux
     mux_2_to_1 #(16) and_or(x & y, x | y, select[0], mux_select[0]); 
     
-    // not/xor mux
-    mux_2_to_1 #(16) not_xor(~x, x ^ y, select[0], mux_select[1]); 
+    // bitwise or uses y because y can be both a register/immediate value
+    mux_2_to_1 #(16) not_xor(~y, x ^ y, select[0], mux_select[1]); 
     
     // selects between and/or and not/xor
     mux_2_to_1 #(16) logic_sel(mux_select[0], mux_select[1], select[1], out);
