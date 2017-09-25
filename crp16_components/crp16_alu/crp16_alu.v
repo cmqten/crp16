@@ -3,22 +3,19 @@
 
 /**
  * The CRP16 ALU. Supports 8 operations. 
- * x, y : operands
- * select : operation select bit
- * alu_out : result
- * v : overflow flag
- * c : carry out flag
- * n : negative flag
- * z : zero flag
  */
-module crp16_alu(x, y, select, alu_out, v, c, n, z);
-    input [15:0] x;
-    input [15:0] y;
-    input [2:0] select;
-    output reg [15:0] alu_out;
-    output reg v, c;
-    output n = alu_out[15];
-    output z = ~(|alu_out);
+module crp16_alu(
+    input [15:0] x,             // First operand
+    input [15:0] y,             // Second operand
+    input [2:0] select,         // Operation select
+    output reg [15:0] alu_out,  // Result
+    output reg v,               // Overflow flag
+    output reg c,               // Carry out flag
+    output n,                   // Negative flag
+    output z                    // Zero flag
+);
+    assign n = alu_out[15];
+    assign z = ~(|alu_out);
     
     always @(*)
     begin
