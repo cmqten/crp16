@@ -4,7 +4,7 @@
 /**
  * Collection of registers.
  */
-module crp16_register_file(
+module crp16_register_file (
     input [2:0] a_select,       // Selector for first register
     input [2:0] b_select,       // Selector for second register
     output reg [15:0] a_val,    // First register value 
