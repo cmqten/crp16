@@ -5,27 +5,37 @@
  * Collection of registers.
  */
 module crp16_register_file (
-    input [2:0] a_select,       // Selector for first register
-    input [2:0] b_select,       // Selector for second register
-    output reg [15:0] a_val,    // First register value 
-    output reg [15:0] b_val,    // Second register value
-    input [15:0] write_val,     // Value to be written 
-    input [2:0] write_select,   // Register to be written 
-    input write,                // Enable writing, active high
-    input clock                 // Clock source, positive edge
+    input   clock,
+    
+    // 4 ports for reading register values
+    input   [2:0]   a_sel,       
+    input   [2:0]   b_sel,
+    input   [2:0]   c_sel,
+    input   [2:0]   d_sel,
+    output  [15:0]  a_val,    
+    output  [15:0]  b_val,   
+    output  [15:0]  c_val,    
+    output  [15:0]  d_val,
+    
+    // 1 port for writing data to register
+    input   write,
+    input   [2:0]   write_sel, 
+    input   [15:0]  write_val      
+              
 );
-    reg [15:0] registers [0:7]; // Registers
+    reg [15:0] registers [0:7]; 
     
-    always @(posedge clock) // Writing to register
-    begin
-        if (write) registers[write_select] <= write_val;
-    end
+    assign a_val = registers[a_sel];
+    assign b_val = registers[b_sel];
+    assign c_val = registers[c_sel];
+    assign d_val = registers[d_sel];
     
-    always @(*) // Reading register value
+    // Positive edge write
+    always @(posedge clock) 
     begin
-        a_val = registers[a_select];
-        b_val = registers[b_select];
+        if (write) registers[write_sel] <= write_val;
     end
+ 
 endmodule
 
 `endif
