@@ -5,10 +5,12 @@
  * The CRP16 ALU. Supports 8 operations. 
  */
 module crp16_alu (
-    input [15:0]        op_a,       // First operand
-    input [15:0]        op_b,       // Second operand
-    input [2:0]         op_sel,     // Operation select
-    output reg [15:0]   alu_out,    // Result
+    // Operands
+    input       [15:0]  op_a,       
+    input       [15:0]  op_b,  
+    
+    input       [2:0]   op_sel,     // Operation select
+    output reg  [15:0]  alu_out,    // Result
     output reg          v,          // Overflow flag
     output reg          c,          // Carry out flag
     output              n,          // Negative flag
@@ -25,7 +27,7 @@ module crp16_alu (
                 {c, alu_out} = {1'b0, op_a} + {1'b0, op_b};
                 
                 // Addition overflows if the operands are the same sign but the
-                // result has a different sign
+                // result has a different sign.
                 v = (~(op_a[15] ^ op_b[15])) & (op_a[15] ^ alu_out[15]);
             end
             
@@ -42,43 +44,43 @@ module crp16_alu (
             3'b010: // Logical shift right
             begin 
                 alu_out = op_a >> (16'b1111 & op_b);
-                c = 1'b0;
-                v = 1'b0;
+                c = 0;
+                v = 0;
             end
             
             3'b011: // Arithmetic shift right
             begin 
                 alu_out = $signed(op_a) >>> (16'b1111 & op_b);
-                c = 1'b0;
-                v = 1'b0;
+                c = 0;
+                v = 0;
             end
             
             3'b100: // Logical shift left
             begin 
                 alu_out = op_a << (16'b1111 & op_b);
-                c = 1'b0;
-                v = 1'b0;
+                c = 0;
+                v = 0;
             end
             
             3'b101: // Bitwise AND
             begin 
                 alu_out = op_a & op_b;
-                c = 1'b0;
-                v = 1'b0;
+                c = 0;
+                v = 0;
             end
             
             3'b110: // Bitwise OR
             begin 
                 alu_out = op_a | op_b;
-                c = 1'b0;
-                v = 1'b0;
+                c = 0;
+                v = 0;
             end
             
             3'b111: // Bitwise XOR
             begin 
                 alu_out = op_a ^ op_b;
-                c = 1'b0;
-                v = 1'b0;
+                c = 0;
+                v = 0;
             end
         endcase
     end
