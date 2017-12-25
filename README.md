@@ -52,7 +52,7 @@ The CRP16 (Carl's RISC Processor 16-bit) is my attempt at creating a RISC archit
 | mulu | Unsigned multiplication on two registers |
 | noop | No operation |
 | or | Bitwise OR two registers |
-| ori | Bitwise OR register and immmediate value |
+| ori | Bitwise OR register and 4-bit sign extended immmediate |
 | sgt | Set destination to 1 if signed first register is greater than signed second register, 0 otherwise |
 | sgti | Set destination to 1 if signed first register is greater than 4-bit sign extended immediate, 0 otherwise |
 | sgtiu | Set destination to 1 if unsigned first register is greater than 4-bit zero extended immediate, 0 otherwise |
@@ -67,4 +67,4 @@ The CRP16 (Carl's RISC Processor 16-bit) is my attempt at creating a RISC archit
 | sub | Subtract two registers |
 | subi | Subtract register and 4-bit zero extended immediate |
 | xor | Bitwise XOR two registers |
-| xori | Bitwise XOR register and immmediate value |
+| xori | Bitwise XOR register and 4-bit sign extended immmediate |
