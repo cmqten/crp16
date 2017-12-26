@@ -12,13 +12,57 @@ module crp16_processor (
     output  [15:0]  pc
 );
     /*==========================================================================
+    Local Parameters, Parametrized Macros
+    ==========================================================================*/
+    
+    // Instruction types
+    `define ALU_INSTR(instr)        (instr[1:0] == 2'b11)
+    `define CALLC_INSTR(instr)      (instr[3:0] == 4'b1110)
+    `define CALLUC_INSTR(instr)     (instr[3:0] == 4'b1010)
+    `define DIVIDE_INSTR(instr)     (instr[3:0] == 4'b1101)
+    `define JUMPC_INSTR(instr)      (instr[3:0] == 4'b0110)
+    `define JUMPUC_INSTR(instr)     (instr[3:0] == 4'b0010)
+    `define LOAD_INSTR(instr)       (instr[3:0] == 4'b0001 && !instr[5])
+    `define LOADIMM_INSTR(instr)    (instr[3:0] == 4'b1001)
+    `define MULTIPLY_INSTR(instr)   (instr[3:0] == 4'b0101)
+    `define NOOP_INSTR(instr)       (instr[15:0] == 16'b0)
+    `define SGT_INSTR(instr)        (instr[3:0] == 4'b1100)
+    `define SLT_INSTR(instr)        (instr[3:0] == 4'b0100)
+    `define STORE_INSTR(instr)      (instr[3:0] == 4'b0001 && instr[5])
+    
+    // Other encoding
+    `define INSTR_ALUOP(instr)      (instr[4:2])
+    `define INSTR_BRANCHCOND(instr) (instr[4])
+    `define INSTR_IMM4(instr)       (instr[9:6])
+    `define INSTR_IMM7(instr)       (instr[12:6])
+    `define INSTR_IMM8(instr)       (instr[12:5])
+    `define INSTR_IMM10(instr)      (instr[15:6])
+    `define INSTR_IMMOP(instr)      (instr[5])
+    `define INSTR_REGA(instr)       (instr[12:10])
+    `define INSTR_REGB(instr)       (instr[9:7])
+    `define INSTR_REGD(instr)       (instr[15:13])
+    `define INSTR_SIGNED(instr)     (instr[4])
+    
+    // Functions
+    `define SIGN_EXTEND(data, width) ({(16-width){data[width-1]}, data})
+    `define ZERO_EXTEND(data, width) ({(16-width){1'b0}, data})
+    
+    // Stages
+    localparam  IF      = 2'b00;
+    localparam  DC      = 2'b01;
+    localparam  EXMEM   = 2'b10;
+    localparam  WB      = 2'b11;
+    
+    /*==========================================================================
     Data/Control Wires, Pipeline Registers
     ==========================================================================*/
+    
+    reg     [1:0]   stage = 2'b0;
     
     // Stage 0 : Instruction Fetch 
     reg     [15:0]  if_pc;
     wire    [15:0]  if_instr, if_mem_addr;
-    wire            if_mem_read, pc_src, pc_write;
+    wire            if_mem_read, pc_src;
     wire    [15:0]  branch_addr, next_addr;
     
     // Stage 1 : Instruction Decode 
@@ -68,7 +112,14 @@ module crp16_processor (
     // Fetch 
     assign next_addr = if_mem_addr + 1;
     assign if_mem_addr = pc_src ? branch_addr : if_pc;
+    assign if_mem_read = stage == IF;
     
+    // Decode
+    assign regfile_a_sel = `INSTR_REGA(dc_instr);
+    assign regfile_b_sel = `CALLC_INSTR(dc_instr) | `JUMPC_INSTR(dc_instr) ? 
+                           `INSTR_REGD(dc_instr) : `INSTR_REGB(dc_instr);
+    assign reg_a_in = regfile_a_out;
+    assign reg_b_in = regfile_b_out;
     
 endmodule
 
