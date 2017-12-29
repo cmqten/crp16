@@ -73,30 +73,30 @@ module crp16_datapath (
     // Stage 0 : Instruction Fetch 
     reg     [15:0]  if_pc;
     wire    [15:0]  if_instr, if_mem_addr;
-    wire    [15:0]  branch_addr, next_addr;
-    wire            pc_src;
+    wire    [15:0]  if_branch_addr, if_next_addr;
+    wire            if_pc_src;
     
     // Stage 1 : Instruction Decode 
     reg     [15:0]  dc_instr, dc_pc;
-    wire    [15:0]  reg_a_in, reg_b_in, regfile_a_out, regfile_b_out;
-    wire    [2:0]   regfile_a_sel, regfile_b_sel;
+    wire    [15:0]  dc_reg_a_in, dc_reg_b_in, dc_rf_a_out, dc_rf_b_out;
+    wire    [2:0]   dc_rf_a_sel, dc_rf_b_sel;
     
     // Stage 2 : Execute or Memory 
-    reg     [15:0]  ex_mem_instr, ex_mem_pc;
-    reg     [15:0]  reg_a, reg_b;
-    wire    [15:0]  alu_op_a, alu_op_b, alu_out, imm_op;
-    wire    [2:0]   alu_op;
-    wire            vflag, cflag, nflag, zflag;
+    reg     [15:0]  em_instr, em_pc;
+    reg     [15:0]  em_reg_a, em_reg_b;
+    wire    [15:0]  em_alu_a, em_alu_b, em_alu_out, em_imm;
+    wire    [2:0]   em_alu_op;
+    wire            em_v, em_c, em_n, em_z;
     
-    wire    [15:0]  mem_data_in, mem_data_out, mem_addr;
-    wire            mem_read, mem_write;
+    wire    [15:0]  em_mem_data_in, em_mem_data_out, em_mem_addr;
+    wire            em_mem_read, em_mem_write;
     
     // Stage 3 : Register Writeback 
     reg     [15:0]  wb_instr, wb_pc;
-    reg     [15:0]  alu_out_reg, mem_data_reg;
-    wire    [15:0]  reg_d_data;
-    wire    [2:0]   reg_d_sel;
-    wire            reg_write;
+    reg     [15:0]  wb_alu_reg, wb_mem_reg;
+    wire    [15:0]  wb_reg_d_data;
+    wire    [2:0]   wb_reg_d_sel;
+    wire            wb_reg_write;
     
     
     /*==========================================================================
@@ -105,110 +105,114 @@ module crp16_datapath (
     
     // ALU 
     crp16_alu alu (
-        .op_a(alu_op_a), .op_b(alu_op_b), .op_sel(alu_op), .alu_out(alu_out),
-        .v(vflag), .c(cflag), .n(nflag), .z(zflag)
+        .op_a(em_alu_a), .op_b(em_alu_b), .op_sel(em_alu_op), .alu_out(em_alu_out),
+        .v(em_v), .c(em_c), .n(em_n), .z(em_z)
     );
     
     // Register File 
     crp16_register_file register_file (
         .clock(clock), 
-        .a_sel(regfile_a_sel), .a_val(regfile_a_out),
-        .b_sel(regfile_b_sel), .b_val(regfile_b_out),
-        .write_sel(reg_d_sel), .write_val(reg_d_data), .write(reg_write)
+        .a_sel(dc_rf_a_sel), .a_val(dc_rf_a_out),
+        .b_sel(dc_rf_b_sel), .b_val(dc_rf_b_out),
+        .write_sel(wb_reg_d_sel), .write_val(wb_reg_d_data), .write(wb_reg_write)
     );
     
     // Memory
     assign mem_clock = clock;
     assign address_a = if_mem_addr;
     assign if_instr = q_a;
-    assign address_b = mem_addr;
-    assign data_b = mem_data_in;
-    assign wren_b = mem_write;
-    assign mem_data_out = q_b;
+    assign address_b = em_mem_addr;
+    assign data_b = em_mem_data_in;
+    assign wren_b = em_mem_write;
+    assign em_mem_data_out = q_b;
   
     
     /*==========================================================================
     Fetch Stage Logic
     ==========================================================================*/
     
-    assign next_addr = if_mem_addr + 1;
-    assign if_mem_addr = pc_src ? branch_addr : if_pc;
+    assign if_next_addr = if_mem_addr + 1;
+    assign if_mem_addr = if_pc_src ? if_branch_addr : if_pc;
     
     
     /*==========================================================================
     Decode Stage Logic
     ==========================================================================*/
     
-    assign regfile_a_sel = `INSTR_REGA(dc_instr);
+    assign dc_rf_a_sel = `INSTR_REGA(dc_instr);
     
-    assign regfile_b_sel = `BRANCHC_INSTR(dc_instr) ? 
-                           `INSTR_REGD(dc_instr) : `INSTR_REGB(dc_instr);
+    assign dc_rf_b_sel = `BRANCHC_INSTR(dc_instr) ? 
+                         `INSTR_REGD(dc_instr) : `INSTR_REGB(dc_instr);
                            
-    assign reg_a_in = regfile_a_out;
-    assign reg_b_in = regfile_b_out;
+    assign dc_reg_a_in = dc_rf_a_out;
+    assign dc_reg_b_in = dc_rf_b_out;
     
-    /*
-    Branch resolution
-    
-    Branch addresses sources:
-      Register A : Instruction is not an immediate instruction
-      PC + SE7 : Conditional branch (jump/call) on immediate offset
-      PC + SE10 : Unconditional branch (jump/call) on immediate offset
-    
-    PC source :
-      Branch address : During unconditional jump or conditional jump where the 
-        register reduction value matches register B
-      PC + 1 : For every other instruction
-    */
-    assign branch_addr = `INSTR_REGOP(dc_instr) ? reg_a_in :
-                         `BRANCHC_INSTR(dc_instr) ? dc_pc + `SE7(dc_instr) :
-                         `BRANCHUC_INSTR(dc_instr) ? dc_pc + `SE10(dc_instr) :
-                         16'b0;
+    // Branch resolution
+    //
+    // Branch addresses sources:
+    //   Register A : Instruction is not an immediate instruction
+    //   PC + SE7 : Conditional branch (jump/call) on immediate offset
+    //   PC + SE10 : Unconditional branch (jump/call) on immediate offset
+    //
+    // PC source :
+    //   Branch address : During unconditional jump or conditional jump where 
+    //     the register reduction value matches register B
+    //   PC + 1 : For every other instruction
+    assign if_branch_addr = `INSTR_REGOP(dc_instr) ? dc_reg_a_in :
+                            `BRANCHC_INSTR(dc_instr) ? dc_pc + `SE7(dc_instr) :
+                            `BRANCHUC_INSTR(dc_instr) ? dc_pc+`SE10(dc_instr) :
+                             16'b0;
                          
-    assign pc_src = `BRANCHUC_INSTR(dc_instr) | 
-                    (`BRANCHC_INSTR(dc_instr) & (`INSTR_BRANCHCOND(dc_instr) ^ 
-                    (|reg_b_in)));
+    assign if_pc_src = `BRANCHUC_INSTR(dc_instr) | 
+                       (`BRANCHC_INSTR(dc_instr) & 
+                       (`INSTR_BRANCHCOND(dc_instr) ^ (|dc_reg_b_in)));
     
     
     /*==========================================================================
     Execute or Memory Stage Logic
     ==========================================================================*/
     
-    assign imm_op = `LOADIMM_INSTR(ex_mem_instr) ?
-                     (`INSTR_SIGNED(ex_mem_instr) ? `SE8(ex_mem_instr) : 
-                                                    `ZE8(ex_mem_instr)) :
+    // Load immediate uses the 8-bit immediate
+    assign em_imm = `LOADIMM_INSTR(em_instr) ?
+                     (`INSTR_SIGNED(em_instr) ? `SE8(em_instr) : 
+                                                `ZE8(em_instr)) :
     
-    // Other instructions that are not load immediate use the 4-bit immediate
-                     (`INSTR_SIGNED(ex_mem_instr) ? `SE4(ex_mem_instr) : 
-                                                    `ZE4(ex_mem_instr));
+    // - Other instructions that are not load immediate use the 4-bit immediate
+    // - Branch immediate values don't matter because branching doesn't use ALU
+                     (`INSTR_SIGNED(em_instr) ? `SE4(em_instr) : 
+                                                `ZE4(em_instr));
     
-    assign alu_op_a = `LOADIMM_INSTR(ex_mem_instr) ? 16'b0 : reg_a;
+    // Load immediate uses the ALU by adding 0 and the 8-bit immediate
+    assign em_alu_a = `LOADIMM_INSTR(em_instr) ? 16'b0 : em_reg_a;
     
-    assign alu_op_b = `LOADIMM_INSTR(ex_mem_instr) | `INSTR_IMM(ex_mem_instr) ?
-                      imm_op : reg_b;
-                      
-    assign alu_op = `ALU_INSTR(ex_mem_instr) ? `INSTR_ALUOP(ex_mem_instr) :
-                    `SGT_INSTR(ex_mem_instr) ? 3'b001 : // Subtract for sgt
-                    `SLT_INSTR(ex_mem_instr) ? 3'b001 : // Subtract for slt
-                    3'b000; // Add for load immediate, doesn't matter for rest
+    assign em_alu_b = `LOADIMM_INSTR(em_instr) | `INSTR_IMM(em_instr) ?
+                       em_imm : em_reg_b;
     
-    assign mem_data_in = reg_b;
-    assign mem_addr = reg_a;
-    assign mem_read = (stage == EXMEM) & `LOAD_INSTR(ex_mem_instr);
-    assign mem_write = (stage == EXMEM) & `STORE_INSTR(ex_mem_instr);
+    // - Subtraction for slt/sgt to get the result from the alu flags
+    // - Addition for load immediate to add 8-bit immediate with 0
+    // - Doesn't matter for everything else 
+    assign em_alu_op = `ALU_INSTR(em_instr) ? `INSTR_ALUOP(em_instr) :
+                       `SGT_INSTR(em_instr) ? 3'b001 : 
+                       `SLT_INSTR(em_instr) ? 3'b001 : 
+                       3'b000; 
+    
+    assign em_mem_data_in = em_reg_b;
+    assign em_mem_addr = em_reg_a;
+    assign em_mem_read = (stage == EXMEM) & `LOAD_INSTR(em_instr);
+    assign em_mem_write = (stage == EXMEM) & `STORE_INSTR(em_instr);
     
     
     /*==========================================================================
     Writeback Stage Logic
     ==========================================================================*/
     
-    assign reg_d_sel = `INSTR_REGD(wb_instr);
+    assign wb_reg_d_sel = `INSTR_REGD(wb_instr);
     
-    assign reg_d_data = `ALU_INSTR(wb_instr) | `LOADIMM_INSTR(wb_instr) ? 
-                        alu_out_reg : mem_data_out;
+    assign wb_reg_d_data = `ALU_INSTR(wb_instr) | `LOADIMM_INSTR(wb_instr) ? 
+                           wb_alu_reg : em_mem_data_out;
     
-    assign reg_write = (stage == WB) & (`ALU_INSTR(wb_instr) | 
-                       `LOADIMM_INSTR(wb_instr) | `LOAD_INSTR(wb_instr));
+    assign wb_reg_write = (stage == WB) & (`ALU_INSTR(wb_instr) | 
+                          `LOADIMM_INSTR(wb_instr) | `LOAD_INSTR(wb_instr));
                 
                 
     always @(posedge clock)
@@ -217,24 +221,24 @@ module crp16_datapath (
             2'd0:
             begin
                 dc_instr <= if_instr;
-                if_pc <= next_addr;
+                if_pc <= if_next_addr;
                 dc_pc <= if_mem_addr;
             end
             
             2'd1:
             begin
-                ex_mem_instr <= dc_instr;
-                ex_mem_pc <= dc_pc;
-                reg_a <= reg_a_in;
-                reg_b <= reg_b_in;
+                em_instr <= dc_instr;
+                em_pc <= dc_pc;
+                em_reg_a <= dc_reg_a_in;
+                em_reg_b <= dc_reg_b_in;
             end
             
             2'd2:
             begin
-                wb_instr <= ex_mem_instr;
-                wb_pc <= ex_mem_pc;
-                alu_out_reg <= alu_out;
-                mem_data_reg <= mem_data_out;
+                wb_instr <= em_instr;
+                wb_pc <= em_pc;
+                wb_alu_reg <= em_alu_out;
+                wb_mem_reg <= em_mem_data_out;
             end
             
             2'd3:;
