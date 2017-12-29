@@ -2,7 +2,7 @@
  * A single 16-bit register. Positive edge triggered, active high write.
  * load_val : value to load to register
  * stored_val : value stored in register
- * write : 0 to enable write, 1 to disable write
+ * write : 0 to disable write, 1 to enable write
  * clock : clock source
  */
 module register_16_bit(load_val, stored_val, write, clock);
