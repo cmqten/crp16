@@ -2,7 +2,7 @@
 
 ## About
 
-The CRP16 (Carl's RISC Processor 16-bit) is my attempt at creating a RISC architecture processor with Verilog and a DE1-SoC (5CSEMA5F31CN) board.
+The CRP16 (Carl's RISC Processor 16-bit) is my attempt at creating a RISC architecture processor with Verilog and a DE1-SoC (5CSEMA5F31C666666N) board.
 
 ## Tentative Specifications
 - 16-bit instructions
