@@ -8,8 +8,8 @@ The CRP16 (Carl's RISC Processor 16-bit) is my attempt at creating a RISC archit
 - 16-bit instructions
 - 8 16-bit general-purpose registers
 - Word addressable memory
-- Harvard architecture
-- 4-stage pipeline with data forwarding and early branch resolve for zero pipeline bubbles
+- Harvard architecture *
+- 4-stage pipeline with data forwarding and early branch resolve for zero pipeline bubbles *
 
 ## Tentative Instruction Set
 
