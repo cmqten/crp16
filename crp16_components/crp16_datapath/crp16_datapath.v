@@ -62,10 +62,13 @@ module crp16_datapath (
     `define ZE8(instr)      ({8'b0, instr[12:5]})
     
     // Stages
-    localparam  IF  = 2'b00;
-    localparam  DC  = 2'b01;
-    localparam  EM  = 2'b10;
-    localparam  WB  = 2'b11;
+    localparam IF = 2'b00;
+    localparam DC = 2'b01;
+    localparam EM = 2'b10;
+    localparam WB = 2'b11;
+    
+    // Constants
+    localparam LINK_REG = 3'b111;
     
     
     /*==========================================================================
@@ -160,7 +163,7 @@ module crp16_datapath (
     //
     // PC source :
     //   Branch address : During unconditional jump/call or conditional jump 
-    //     where the condition register macthes the jump condition 
+    //     where the condition register matches the jump condition 
     //     (zero/non-zero)
     //   PC + 1 : For every other instruction
     assign if_branch_addr = `INSTR_BRANCHREG(dc_instr) ? dc_reg_a_in :
@@ -171,7 +174,7 @@ module crp16_datapath (
                          
     assign if_pc_src = `CALL_INSTR(dc_instr) | `JUMPUC_INSTR(dc_instr) |
                        (`JUMPC_INSTR(dc_instr) & 
-                       (`INSTR_BRANCHCOND(dc_instr) ^ (|dc_reg_b_in)));
+                       (`INSTR_BRANCHCOND(dc_instr) == (|dc_reg_b_in)));
     
     
     /*==========================================================================
@@ -220,13 +223,16 @@ module crp16_datapath (
     Writeback Stage Logic
     ==========================================================================*/
     
-    assign wb_reg_d_sel = `INSTR_REGD(wb_instr);
+    assign wb_reg_d_sel = `CALL_INSTR(wb_instr) ? 
+                          LINK_REG : `INSTR_REGD(wb_instr);
     
-    assign wb_reg_d_data = `LOAD_INSTR(wb_instr) ? em_mem_data_out : wb_alu_reg;
+    assign wb_reg_d_data = `CALL_INSTR(wb_instr) ? wb_pc : 
+                           `LOAD_INSTR(wb_instr) ? em_mem_data_out : 
+                           wb_alu_reg;
     
     assign wb_reg_write = (stage == WB) & (`ALU_INSTR(wb_instr) | 
                           `LOADIMM_INSTR(wb_instr) | `LOAD_INSTR(wb_instr) | 
-                          `LOADHI_INSTR(wb_instr));
+                          `LOADHI_INSTR(wb_instr) | `CALL_INSTR(wb_instr));
                 
                 
     always @(posedge clock)
@@ -236,7 +242,7 @@ module crp16_datapath (
             begin
                 dc_instr <= if_instr;
                 if_pc <= if_next_addr;
-                dc_pc <= if_mem_addr;
+                dc_pc <= if_next_addr;
             end
             
             2'd1:
