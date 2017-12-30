@@ -2,7 +2,7 @@
 
 ## About
 
-The CRP16 (Carl's RISC Processor 16-bit) is my attempt at creating a RISC architecture processor with Verilog and a DE1-SoC (5CSEMA5F31CN) board.
+The CRP16 (Carl's RISC Processor 16-bit) is my attempt at creating a RISC architecture processor with Verilog and a DE1-SoC (5CSEMA5F31C6N) board.
 
 ## Tentative Specifications
 - 16-bit instructions
@@ -21,49 +21,37 @@ The CRP16 (Carl's RISC Processor 16-bit) is my attempt at creating a RISC archit
 | andi | Bitwise AND register and 4-bit sign extended immmediate |
 | asr | Arithmetic shift right first register by unsigned least significant nibble in second register | 
 | asri | Arithmetic shift right first register by unsigned 4-bit immediate | 
-| call | Call subroutine at pc + 10-bit sign extended offset, and link |
-| callnz | Call subroutine at pc + 7-bit sign extended offset if condition register is not zero, and link |
-| callr | Call subroutine at address in register, and link |
-| callrnz | Call subroutine at address in register if condition register is not zero, and link |
-| callrz | Call subroutine at address in register if condition register is zero, and link |
-| callz | Call subroutine at pc + 7-bit sign extended offset if condition register is zero, and link |
-| div | Signed division on two registers |
-| divi | Signed division on register and 4-bit sign extended immediate |
-| diviu | Unsigned division on register and 4-bit zero extended immediate |
-| divu | Unsigned division on two registers |
-| jmp | Jump to pc + 10-bit sign extended offset |
-| jmpnz | Jump to pc + 7-bit sign extended offset if condition register is not zero |
-| jmpr | Jump to address in register |
-| jmprnz | Jump to address in register if condition register is not zero |
-| jmprz | Jump to address in register if condition register is zero |
-| jmpz | Jump to pc + 7-bit sign extended offset if condition register is zero |
-| ldr | Load word from memory to register |
-| ldrb | Load sign-extended byte from memory to register |
-| ldrbu | Load zero-extended byte from memory to register |
-| ldri | Load sign-extended immediate byte to register |
-| ldriu | Load zero-extended immediate byte to register |
+| call | Call subroutine at pc + 11-bit sign extended offset |
+| callr | Call subroutine at address in register |
+| gt | Set destination to 1 if unsigned first register is greater than unsigned second register, 0 otherwise |
+| gti | Set destination to 1 if unsigned first register is greater than 4-bit zero extended immediate, 0 otherwise |
+| gts | Set destination to 1 if signed first register is greater than signed second register, 0 otherwise |
+| gtsi | Set destination to 1 if signed first register is greater than 4-bit sign extended immediate, 0 otherwise |
+| j | Jump to pc + 11-bit sign extended offset |
+| jnz | Jump to pc + 8-bit sign extended offset if condition register is not zero |
+| jr | Jump to address in register |
+| jrnz | Jump to address in register if condition register is not zero |
+| jrz | Jump to address in register if condition register is zero |
+| jz | Jump to pc + 8-bit sign extended offset if condition register is zero |
+| ldb | Load zero-extended byte from memory to register |
+| ldhi | Load immediate byte to higher byte of register while preserving lower byte |
+| ldi | Load zero-extended immediate byte to register |
+| ldsb | Load sign-extended byte from memory to register |
+| ldsi | Load sign-extended immediate byte to register |
+| ldw | Load word from memory to register |
 | lsl | Logical shift left first register by unsigned least significant nibble in second register |
 | lsli | Logical shift left first register by unsigned 4-bit immediate |
 | lsr | Logical shift right first register by unsigned least significant nibble in second register | 
 | lsri | Logical shift right first register by unsigned 4-bit immediate | 
-| mul | Signed multiplication on two registers |
-| muli | Signed multiplication on register and 4-bit sign extended immediate |
-| muliu | Unsigned multiplication on register and 4-bit zero extended immeduate |
-| mulu | Unsigned multiplication on two registers |
+| lt | Set destination to 1 if unsigned first register is less than unsigned second register, 0 otherwise |
+| lti | Set destination to 1 if unsigned first register is less than 4-bit zero extended immediate, 0 otherwise |
+| lts | Set destination to 1 if signed first register is less than signed second register, 0 otherwise |
+| ltsi | Set destination to 1 if signed first register is less than 4-bit sign extended immediate, 0 otherwise |
 | noop | No operation |
 | or | Bitwise OR two registers |
 | ori | Bitwise OR register and 4-bit sign extended immmediate |
-| sgt | Set destination to 1 if signed first register is greater than signed second register, 0 otherwise |
-| sgti | Set destination to 1 if signed first register is greater than 4-bit sign extended immediate, 0 otherwise |
-| sgtiu | Set destination to 1 if unsigned first register is greater than 4-bit zero extended immediate, 0 otherwise |
-| sgtu | Set destination to 1 if unsigned first register is greater than unsigned second register, 0 otherwise |
-| slt | Set destination to 1 if signed first register is less than signed second register, 0 otherwise |
-| slti | Set destination to 1 if signed first register is less than 4-bit sign extended immediate, 0 otherwise |
-| sltiu | Set destination to 1 if unsigned first register is less than 4-bit zero extended immediate, 0 otherwise |
-| sltu | Set destination to 1 if unsigned first register is less than unsigned second register, 0 otherwise |
-| str | Store word from register to memory |
-| strb | Store sign-extended byte from register to memory |
-| strbu | Store zero-extended byte from register to memory |
+| stb | Store byte from register to memory |
+| stw | Store word from register to memory |
 | sub | Subtract two registers |
 | subi | Subtract register and 4-bit zero extended immediate |
 | xor | Bitwise XOR two registers |

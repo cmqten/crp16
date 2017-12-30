@@ -4,7 +4,6 @@
 `include "../crp16_alu/crp16_alu.v"
 `include "../crp16_register_file/crp16_register_file.v"
 `include "../../crp16_subcomponents/register_16_bit/register_16_bit.v"
-`include "../../crp16_subcomponents/hex_decoder/hex_decoder.v"
 
 module crp16_datapath (
     input           clock,
@@ -18,7 +17,12 @@ module crp16_datapath (
     output          wren_b,
     input   [15:0]  q_a,
     input   [15:0]  q_b,
-    output          mem_clock 
+    output          mem_clock, 
+    
+    // Register view
+    input   [2:0]   reg_sel,
+    output  [15:0]  reg_view,
+    output  [15:0]  dc_instr_view
 );
     /*==========================================================================
     Local Parameters, Parametrized Macros
@@ -26,42 +30,49 @@ module crp16_datapath (
     
     // Instruction types
     `define ALU_INSTR(instr)        (instr[1:0] == 2'b11)
-    `define BRANCHC_INSTR(instr)    (instr[2:0] == 3'b110)
-    `define BRANCHUC_INSTR(instr)   (instr[2:0] == 3'b010)
-    `define DIVIDE_INSTR(instr)     (instr[3:0] == 4'b1101)
-    `define LOAD_INSTR(instr)       (instr[3:0] == 4'b0001 && !instr[5])
+    `define CALL_INSTR(instr)       (instr[3:0] == 4'b1010)
+    `define JUMPC_INSTR(instr)      (instr[2:0] == 3'b110)
+    `define JUMPUC_INSTR(instr)     (instr[3:0] == 4'b0010)
+    `define LOAD_INSTR(instr)       (instr[5:0] == 6'b000001)
+    `define LOADHI_INSTR(instr)     (instr[4:0] == 5'b10001)
     `define LOADIMM_INSTR(instr)    (instr[3:0] == 4'b1001)
-    `define MULTIPLY_INSTR(instr)   (instr[3:0] == 4'b0101)
     `define NOOP_INSTR(instr)       (instr[15:0] == 16'b0)
     `define SGT_INSTR(instr)        (instr[3:0] == 4'b1100)
     `define SLT_INSTR(instr)        (instr[3:0] == 4'b0100)
-    `define STORE_INSTR(instr)      (instr[3:0] == 4'b0001 && instr[5])
+    `define STORE_INSTR(instr)      (instr[5:0] == 6'b100001)
     
     // Other encoding
     `define INSTR_ALUOP(instr)      (instr[4:2])
-    `define INSTR_BRANCHCOND(instr) (instr[4])
+    `define INSTR_BRANCHCOND(instr) (instr[3])
+    `define INSTR_BRANCHREG(instr)  (!instr[4])
     `define INSTR_BYTEWORD(instr)   (instr[6])
     `define INSTR_IMM(instr)        (instr[5])
     `define INSTR_LINK(instr)       (instr[3])
+    `define INSTR_LOADSIGNED(instr) (instr[7])
     `define INSTR_REGA(instr)       (instr[12:10])
     `define INSTR_REGB(instr)       (instr[9:7])
     `define INSTR_REGD(instr)       (instr[15:13])
-    `define INSTR_REGOP(instr)      (!instr[5])
     `define INSTR_SIGNED(instr)     (instr[4])
     
-    // Sign/zero-extended immediates
+    // Immediates
+    // SEb : sign extend b-bit immediate
+    // ZEb : zero extend b-bit immediate
+    // HI8 : 8-bit immediate in the higher byte, 0 in the lower byte
+    `define HI8(instr)      ({instr[12:5], 8'b0})
     `define SE4(instr)      ({{12{instr[9]}}, instr[9:6]})
-    `define SE7(instr)      ({{9{instr[12]}}, instr[12:6]})
     `define SE8(instr)      ({{8{instr[12]}}, instr[12:5]})
-    `define SE10(instr)     ({{6{instr[15]}}, instr[15:6]})
-    `define ZE4(instr)      ({{12{1'b0}}, instr[9:6]})
-    `define ZE8(instr)      ({{8{1'b0}}, instr[12:5]})
+    `define SE11(instr)     ({{5{instr[15]}}, instr[15:5]})
+    `define ZE4(instr)      ({12'b0, instr[9:6]})
+    `define ZE8(instr)      ({8'b0, instr[12:5]})
     
     // Stages
-    localparam  IF      = 2'b00;
-    localparam  DC      = 2'b01;
-    localparam  EXMEM   = 2'b10;
-    localparam  WB      = 2'b11;
+    localparam IF = 2'b00;
+    localparam DC = 2'b01;
+    localparam EM = 2'b10;
+    localparam WB = 2'b11;
+    
+    // Constants
+    localparam LINK_REG = 3'b111;
     
     
     /*==========================================================================
@@ -114,6 +125,7 @@ module crp16_datapath (
         .clock(clock), 
         .a_sel(dc_rf_a_sel), .a_val(dc_rf_a_out),
         .b_sel(dc_rf_b_sel), .b_val(dc_rf_b_out),
+        .c_sel(reg_sel), .c_val(reg_view),
         .write_sel(wb_reg_d_sel), .write_val(wb_reg_d_data), .write(wb_reg_write)
     );
     
@@ -141,7 +153,7 @@ module crp16_datapath (
     
     assign dc_rf_a_sel = `INSTR_REGA(dc_instr);
     
-    assign dc_rf_b_sel = `BRANCHC_INSTR(dc_instr) ? 
+    assign dc_rf_b_sel = `JUMPC_INSTR(dc_instr) | `LOADHI_INSTR(dc_instr) ? 
                          `INSTR_REGD(dc_instr) : `INSTR_REGB(dc_instr);
                            
     assign dc_reg_a_in = dc_rf_a_out;
@@ -151,21 +163,23 @@ module crp16_datapath (
     //
     // Branch addresses sources:
     //   Register A : Instruction is not an immediate instruction
-    //   PC + SE7 : Conditional branch (jump/call) on immediate offset
-    //   PC + SE10 : Unconditional branch (jump/call) on immediate offset
+    //   PC + SE8 : Conditional jump on immediate offset
+    //   PC + SE11 : Unconditional branch (jump/call) on immediate offset
     //
     // PC source :
-    //   Branch address : During unconditional jump or conditional jump where 
-    //     the register reduction value matches register B
+    //   Branch address : During unconditional jump/call or conditional jump 
+    //     where the condition register matches the jump condition 
+    //     (zero/non-zero)
     //   PC + 1 : For every other instruction
-    assign if_branch_addr = `INSTR_REGOP(dc_instr) ? dc_reg_a_in :
-                            `BRANCHC_INSTR(dc_instr) ? dc_pc + `SE7(dc_instr) :
-                            `BRANCHUC_INSTR(dc_instr) ? dc_pc+`SE10(dc_instr) :
+    assign if_branch_addr = `INSTR_BRANCHREG(dc_instr) ? dc_reg_a_in :
+                            `CALL_INSTR(dc_instr) ? dc_pc + `SE11(dc_instr) :
+                            `JUMPC_INSTR(dc_instr) ? dc_pc + `SE8(dc_instr) :
+                            `JUMPUC_INSTR(dc_instr) ? dc_pc + `SE11(dc_instr) :
                              16'b0;
                          
-    assign if_pc_src = `BRANCHUC_INSTR(dc_instr) | 
-                       (`BRANCHC_INSTR(dc_instr) & 
-                       (`INSTR_BRANCHCOND(dc_instr) ^ (|dc_reg_b_in)));
+    assign if_pc_src = `CALL_INSTR(dc_instr) | `JUMPUC_INSTR(dc_instr) |
+                       (`JUMPC_INSTR(dc_instr) & 
+                       (`INSTR_BRANCHCOND(dc_instr) == (|dc_reg_b_in)));
     
     
     /*==========================================================================
@@ -182,14 +196,22 @@ module crp16_datapath (
                      (`INSTR_SIGNED(em_instr) ? `SE4(em_instr) : 
                                                 `ZE4(em_instr));
     
-    // Load immediate uses the ALU by adding 0 and the 8-bit immediate
-    assign em_alu_a = `LOADIMM_INSTR(em_instr) ? 16'b0 : em_reg_a;
+    // - Load hi uses the ALU by adding the 8-bit immediate in the higher byte 
+    //     and the lower byte of register b
+    // - Load immediate uses the ALU by adding 0 and the 8-bit immediate
+    assign em_alu_a = `LOADHI_INSTR(em_instr) ? `HI8(em_instr) :
+                      `LOADIMM_INSTR(em_instr) ? 16'b0 : 
+                      em_reg_a;
     
-    assign em_alu_b = `LOADIMM_INSTR(em_instr) | `INSTR_IMM(em_instr) ?
-                       em_imm : em_reg_b;
+    
+    assign em_alu_b = `LOADHI_INSTR(em_instr) ? em_reg_b[7:0] :
+                      `LOADIMM_INSTR(em_instr) | `INSTR_IMM(em_instr) ? em_imm : 
+                      em_reg_b;
     
     // - Subtraction for slt/sgt to get the result from the alu flags
     // - Addition for load immediate to add 8-bit immediate with 0
+    // - Addition for load to add 8-bit immediate in the higher byte and lower 
+    //     byte of register b
     // - Doesn't matter for everything else 
     assign em_alu_op = `ALU_INSTR(em_instr) ? `INSTR_ALUOP(em_instr) :
                        `SGT_INSTR(em_instr) ? 3'b001 : 
@@ -198,21 +220,24 @@ module crp16_datapath (
     
     assign em_mem_data_in = em_reg_b;
     assign em_mem_addr = em_reg_a;
-    assign em_mem_read = (stage == EXMEM) & `LOAD_INSTR(em_instr);
-    assign em_mem_write = (stage == EXMEM) & `STORE_INSTR(em_instr);
+    assign em_mem_read = (stage == EM) & `LOAD_INSTR(em_instr);
+    assign em_mem_write = (stage == EM) & `STORE_INSTR(em_instr);
     
     
     /*==========================================================================
     Writeback Stage Logic
     ==========================================================================*/
     
-    assign wb_reg_d_sel = `INSTR_REGD(wb_instr);
+    assign wb_reg_d_sel = `CALL_INSTR(wb_instr) ? 
+                          LINK_REG : `INSTR_REGD(wb_instr);
     
-    assign wb_reg_d_data = `ALU_INSTR(wb_instr) | `LOADIMM_INSTR(wb_instr) ? 
-                           wb_alu_reg : em_mem_data_out;
+    assign wb_reg_d_data = `CALL_INSTR(wb_instr) ? wb_pc : 
+                           `LOAD_INSTR(wb_instr) ? em_mem_data_out : 
+                           wb_alu_reg;
     
     assign wb_reg_write = (stage == WB) & (`ALU_INSTR(wb_instr) | 
-                          `LOADIMM_INSTR(wb_instr) | `LOAD_INSTR(wb_instr));
+                          `LOADIMM_INSTR(wb_instr) | `LOAD_INSTR(wb_instr) | 
+                          `LOADHI_INSTR(wb_instr) | `CALL_INSTR(wb_instr));
                 
                 
     always @(posedge clock)
@@ -222,7 +247,7 @@ module crp16_datapath (
             begin
                 dc_instr <= if_instr;
                 if_pc <= if_next_addr;
-                dc_pc <= if_mem_addr;
+                dc_pc <= if_next_addr;
             end
             
             2'd1:
@@ -246,6 +271,8 @@ module crp16_datapath (
         
         stage <= stage + 2'd1;
     end
+    
+    assign dc_instr_view = dc_instr;
     
 endmodule
 

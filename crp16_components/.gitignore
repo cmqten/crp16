@@ -1,7 +1,9 @@
 */*
 !*/*.v
 !*/*.vwf
+!*/*.s
+!*/*.mif
+!*/*.bsf
 !*/vwf
 !*/test_files
 !.gitignore
-!*.mif
