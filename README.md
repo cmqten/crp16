@@ -4,14 +4,21 @@
 
 The CRP16 (Carl's RISC Processor 16-bit) is my attempt at creating a RISC architecture processor with Verilog and a DE1-SoC (5CSEMA5F31C6N) board.
 
-## Tentative Specifications
+## Table of Contents
+
+* [Specifications](#specifications)
+* [Instruction Set](#instruction-set)
+* [Instruction Encoding](#instruction-encoding)
+* [Milestones](#milestones)
+
+## Specifications
 - 16-bit instructions
 - 8 16-bit general-purpose registers
 - Word addressable memory
 - Harvard architecture *
 - 4-stage pipeline with data forwarding and early branch resolve for zero pipeline bubbles *
 
-## Tentative Instruction Set
+## Instruction Set
 
 | Instruction | Description |
 | - | - |
@@ -58,6 +65,10 @@ The CRP16 (Carl's RISC Processor 16-bit) is my attempt at creating a RISC archit
 | xori | Bitwise XOR register and 4-bit sign extended immmediate |
 
 \* Not yet implemented
+
+## Instruction Encoding
+
+NULL
 
 ## Milestones
 
