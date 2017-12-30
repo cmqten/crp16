@@ -4,7 +4,6 @@
 `include "../crp16_alu/crp16_alu.v"
 `include "../crp16_register_file/crp16_register_file.v"
 `include "../../crp16_subcomponents/register_16_bit/register_16_bit.v"
-`include "../../crp16_subcomponents/hex_decoder/hex_decoder.v"
 
 module crp16_datapath (
     input           clock,
@@ -18,7 +17,12 @@ module crp16_datapath (
     output          wren_b,
     input   [15:0]  q_a,
     input   [15:0]  q_b,
-    output          mem_clock 
+    output          mem_clock, 
+    
+    // Register view
+    input   [2:0]   reg_sel,
+    output  [15:0]  reg_view,
+    output  [15:0]  dc_instr_view
 );
     /*==========================================================================
     Local Parameters, Parametrized Macros
@@ -121,6 +125,7 @@ module crp16_datapath (
         .clock(clock), 
         .a_sel(dc_rf_a_sel), .a_val(dc_rf_a_out),
         .b_sel(dc_rf_b_sel), .b_val(dc_rf_b_out),
+        .c_sel(reg_sel), .c_val(reg_view),
         .write_sel(wb_reg_d_sel), .write_val(wb_reg_d_data), .write(wb_reg_write)
     );
     
@@ -266,6 +271,8 @@ module crp16_datapath (
         
         stage <= stage + 2'd1;
     end
+    
+    assign dc_instr_view = dc_instr;
     
 endmodule
 
