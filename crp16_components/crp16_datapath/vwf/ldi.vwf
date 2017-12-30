@@ -26,7 +26,7 @@ HEADER
 	VERSION = 1;
 	TIME_UNIT = ns;
 	DATA_OFFSET = 0.0;
-	DATA_DURATION = 800.0;
+	DATA_DURATION = 640.0;
 	SIMULATION_TIME = 0.0;
 	GRID_PHASE = 0.0;
 	GRID_PERIOD = 40.0;
@@ -2460,7 +2460,7 @@ TRANSITION_LIST("clock")
 		REPEAT = 1;
 		NODE
 		{
-			REPEAT = 20;
+			REPEAT = 16;
 			LEVEL 0 FOR 20.0;
 			LEVEL 1 FOR 20.0;
 		}
@@ -2472,7 +2472,7 @@ TRANSITION_LIST("q_a[15]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 640.0;
+		LEVEL 0 FOR 480.0;
 		LEVEL 1 FOR 160.0;
 	}
 }
@@ -2484,7 +2484,6 @@ TRANSITION_LIST("q_a[14]")
 		REPEAT = 1;
 		LEVEL 0 FOR 320.0;
 		LEVEL 1 FOR 320.0;
-		LEVEL 0 FOR 160.0;
 	}
 }
 
@@ -2493,10 +2492,7 @@ TRANSITION_LIST("q_a[13]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 160.0;
-		LEVEL 1 FOR 160.0;
-		LEVEL 0 FOR 160.0;
-		LEVEL 1 FOR 160.0;
+		LEVEL 1 FOR 480.0;
 		LEVEL 0 FOR 160.0;
 	}
 }
@@ -2506,7 +2502,10 @@ TRANSITION_LIST("q_a[12]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL 0 FOR 160.0;
+		LEVEL 1 FOR 160.0;
+		LEVEL 0 FOR 160.0;
+		LEVEL 1 FOR 160.0;
 	}
 }
 
@@ -2515,7 +2514,8 @@ TRANSITION_LIST("q_a[11]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL 0 FOR 480.0;
+		LEVEL 1 FOR 160.0;
 	}
 }
 
@@ -2524,7 +2524,9 @@ TRANSITION_LIST("q_a[10]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL 1 FOR 160.0;
+		LEVEL 0 FOR 160.0;
+		LEVEL 1 FOR 320.0;
 	}
 }
 
@@ -2533,9 +2535,7 @@ TRANSITION_LIST("q_a[9]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 1 FOR 160.0;
-		LEVEL 0 FOR 160.0;
-		LEVEL 1 FOR 160.0;
+		LEVEL 1 FOR 320.0;
 		LEVEL 0 FOR 160.0;
 		LEVEL 1 FOR 160.0;
 	}
@@ -2548,9 +2548,7 @@ TRANSITION_LIST("q_a[8]")
 		REPEAT = 1;
 		LEVEL 0 FOR 160.0;
 		LEVEL 1 FOR 160.0;
-		LEVEL 0 FOR 160.0;
-		LEVEL 1 FOR 160.0;
-		LEVEL 0 FOR 160.0;
+		LEVEL 0 FOR 320.0;
 	}
 }
 
@@ -2562,7 +2560,6 @@ TRANSITION_LIST("q_a[7]")
 		LEVEL 0 FOR 320.0;
 		LEVEL 1 FOR 160.0;
 		LEVEL 0 FOR 160.0;
-		LEVEL 1 FOR 160.0;
 	}
 }
 
@@ -2571,8 +2568,8 @@ TRANSITION_LIST("q_a[6]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 1 FOR 640.0;
-		LEVEL 0 FOR 160.0;
+		LEVEL 1 FOR 160.0;
+		LEVEL 0 FOR 480.0;
 	}
 }
 
@@ -2581,7 +2578,9 @@ TRANSITION_LIST("q_a[5]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 1 FOR 800.0;
+		LEVEL 1 FOR 320.0;
+		LEVEL 0 FOR 160.0;
+		LEVEL 1 FOR 160.0;
 	}
 }
 
@@ -2590,7 +2589,8 @@ TRANSITION_LIST("q_a[4]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL 0 FOR 320.0;
+		LEVEL 1 FOR 320.0;
 	}
 }
 
@@ -2599,8 +2599,7 @@ TRANSITION_LIST("q_a[3]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 1 FOR 160.0;
-		LEVEL 0 FOR 640.0;
+		LEVEL 1 FOR 640.0;
 	}
 }
 
@@ -2609,8 +2608,7 @@ TRANSITION_LIST("q_a[2]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 480.0;
-		LEVEL 1 FOR 320.0;
+		LEVEL 0 FOR 640.0;
 	}
 }
 
@@ -2619,8 +2617,7 @@ TRANSITION_LIST("q_a[1]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 160.0;
-		LEVEL 1 FOR 640.0;
+		LEVEL 0 FOR 640.0;
 	}
 }
 
@@ -2629,7 +2626,7 @@ TRANSITION_LIST("q_a[0]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 1 FOR 800.0;
+		LEVEL 1 FOR 640.0;
 	}
 }
 
@@ -2638,7 +2635,7 @@ TRANSITION_LIST("if_pc[15]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -2647,7 +2644,7 @@ TRANSITION_LIST("if_pc[14]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -2656,7 +2653,7 @@ TRANSITION_LIST("if_pc[13]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -2665,7 +2662,7 @@ TRANSITION_LIST("if_pc[12]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -2674,7 +2671,7 @@ TRANSITION_LIST("if_pc[11]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -2683,7 +2680,7 @@ TRANSITION_LIST("if_pc[10]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -2692,7 +2689,7 @@ TRANSITION_LIST("if_pc[9]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -2701,7 +2698,7 @@ TRANSITION_LIST("if_pc[8]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -2710,7 +2707,7 @@ TRANSITION_LIST("if_pc[7]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -2719,7 +2716,7 @@ TRANSITION_LIST("if_pc[6]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -2728,7 +2725,7 @@ TRANSITION_LIST("if_pc[5]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -2737,7 +2734,7 @@ TRANSITION_LIST("if_pc[4]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -2746,7 +2743,7 @@ TRANSITION_LIST("if_pc[3]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -2755,7 +2752,7 @@ TRANSITION_LIST("if_pc[2]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -2764,7 +2761,7 @@ TRANSITION_LIST("if_pc[1]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -2773,7 +2770,7 @@ TRANSITION_LIST("if_pc[0]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -2782,7 +2779,7 @@ TRANSITION_LIST("dc_instr[15]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -2791,7 +2788,7 @@ TRANSITION_LIST("dc_instr[14]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -2800,7 +2797,7 @@ TRANSITION_LIST("dc_instr[13]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -2809,7 +2806,7 @@ TRANSITION_LIST("dc_instr[12]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -2818,7 +2815,7 @@ TRANSITION_LIST("dc_instr[11]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -2827,7 +2824,7 @@ TRANSITION_LIST("dc_instr[10]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -2836,7 +2833,7 @@ TRANSITION_LIST("dc_instr[9]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -2845,7 +2842,7 @@ TRANSITION_LIST("dc_instr[8]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -2854,7 +2851,7 @@ TRANSITION_LIST("dc_instr[7]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -2863,7 +2860,7 @@ TRANSITION_LIST("dc_instr[6]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -2872,7 +2869,7 @@ TRANSITION_LIST("dc_instr[5]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -2881,7 +2878,7 @@ TRANSITION_LIST("dc_instr[4]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -2890,7 +2887,7 @@ TRANSITION_LIST("dc_instr[3]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -2899,7 +2896,7 @@ TRANSITION_LIST("dc_instr[2]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -2908,7 +2905,7 @@ TRANSITION_LIST("dc_instr[1]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -2917,7 +2914,7 @@ TRANSITION_LIST("dc_instr[0]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -2926,7 +2923,7 @@ TRANSITION_LIST("dc_pc[15]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -2935,7 +2932,7 @@ TRANSITION_LIST("dc_pc[14]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -2944,7 +2941,7 @@ TRANSITION_LIST("dc_pc[13]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -2953,7 +2950,7 @@ TRANSITION_LIST("dc_pc[12]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -2962,7 +2959,7 @@ TRANSITION_LIST("dc_pc[11]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -2971,7 +2968,7 @@ TRANSITION_LIST("dc_pc[10]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -2980,7 +2977,7 @@ TRANSITION_LIST("dc_pc[9]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -2989,7 +2986,7 @@ TRANSITION_LIST("dc_pc[8]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -2998,7 +2995,7 @@ TRANSITION_LIST("dc_pc[7]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -3007,7 +3004,7 @@ TRANSITION_LIST("dc_pc[6]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -3016,7 +3013,7 @@ TRANSITION_LIST("dc_pc[5]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -3025,7 +3022,7 @@ TRANSITION_LIST("dc_pc[4]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -3034,7 +3031,7 @@ TRANSITION_LIST("dc_pc[3]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -3043,7 +3040,7 @@ TRANSITION_LIST("dc_pc[2]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -3052,7 +3049,7 @@ TRANSITION_LIST("dc_pc[1]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -3061,7 +3058,7 @@ TRANSITION_LIST("dc_pc[0]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -3070,7 +3067,7 @@ TRANSITION_LIST("em_instr[15]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -3079,7 +3076,7 @@ TRANSITION_LIST("em_instr[14]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -3088,7 +3085,7 @@ TRANSITION_LIST("em_instr[13]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -3097,7 +3094,7 @@ TRANSITION_LIST("em_instr[12]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -3106,7 +3103,7 @@ TRANSITION_LIST("em_instr[11]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -3115,7 +3112,7 @@ TRANSITION_LIST("em_instr[10]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -3124,7 +3121,7 @@ TRANSITION_LIST("em_instr[9]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -3133,7 +3130,7 @@ TRANSITION_LIST("em_instr[8]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -3142,7 +3139,7 @@ TRANSITION_LIST("em_instr[7]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -3151,7 +3148,7 @@ TRANSITION_LIST("em_instr[6]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -3160,7 +3157,7 @@ TRANSITION_LIST("em_instr[5]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -3169,7 +3166,7 @@ TRANSITION_LIST("em_instr[4]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -3178,7 +3175,7 @@ TRANSITION_LIST("em_instr[3]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -3187,7 +3184,7 @@ TRANSITION_LIST("em_instr[2]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -3196,7 +3193,7 @@ TRANSITION_LIST("em_instr[1]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -3205,7 +3202,7 @@ TRANSITION_LIST("em_instr[0]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -3214,7 +3211,7 @@ TRANSITION_LIST("wb_instr[15]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -3223,7 +3220,7 @@ TRANSITION_LIST("wb_instr[14]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -3232,7 +3229,7 @@ TRANSITION_LIST("wb_instr[13]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -3241,7 +3238,7 @@ TRANSITION_LIST("wb_instr[12]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -3250,7 +3247,7 @@ TRANSITION_LIST("wb_instr[11]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -3259,7 +3256,7 @@ TRANSITION_LIST("wb_instr[10]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -3268,7 +3265,7 @@ TRANSITION_LIST("wb_instr[9]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -3277,7 +3274,7 @@ TRANSITION_LIST("wb_instr[8]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -3286,7 +3283,7 @@ TRANSITION_LIST("wb_instr[7]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -3295,7 +3292,7 @@ TRANSITION_LIST("wb_instr[6]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -3304,7 +3301,7 @@ TRANSITION_LIST("wb_instr[5]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -3313,7 +3310,7 @@ TRANSITION_LIST("wb_instr[4]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -3322,7 +3319,7 @@ TRANSITION_LIST("wb_instr[3]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -3331,7 +3328,7 @@ TRANSITION_LIST("wb_instr[2]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -3340,7 +3337,7 @@ TRANSITION_LIST("wb_instr[1]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -3349,7 +3346,7 @@ TRANSITION_LIST("wb_instr[0]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -3358,7 +3355,7 @@ TRANSITION_LIST("crp16_register_file:register_file|registers[0][15]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -3367,7 +3364,7 @@ TRANSITION_LIST("crp16_register_file:register_file|registers[0][14]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -3376,7 +3373,7 @@ TRANSITION_LIST("crp16_register_file:register_file|registers[0][13]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -3385,7 +3382,7 @@ TRANSITION_LIST("crp16_register_file:register_file|registers[0][12]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -3394,7 +3391,7 @@ TRANSITION_LIST("crp16_register_file:register_file|registers[0][11]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -3403,7 +3400,7 @@ TRANSITION_LIST("crp16_register_file:register_file|registers[0][10]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -3412,7 +3409,7 @@ TRANSITION_LIST("crp16_register_file:register_file|registers[0][9]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -3421,7 +3418,7 @@ TRANSITION_LIST("crp16_register_file:register_file|registers[0][8]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -3430,7 +3427,7 @@ TRANSITION_LIST("crp16_register_file:register_file|registers[0][7]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -3439,7 +3436,7 @@ TRANSITION_LIST("crp16_register_file:register_file|registers[0][6]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -3448,7 +3445,7 @@ TRANSITION_LIST("crp16_register_file:register_file|registers[0][5]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -3457,7 +3454,7 @@ TRANSITION_LIST("crp16_register_file:register_file|registers[0][4]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -3466,7 +3463,7 @@ TRANSITION_LIST("crp16_register_file:register_file|registers[0][3]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -3475,7 +3472,7 @@ TRANSITION_LIST("crp16_register_file:register_file|registers[0][2]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -3484,7 +3481,7 @@ TRANSITION_LIST("crp16_register_file:register_file|registers[0][1]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -3493,7 +3490,7 @@ TRANSITION_LIST("crp16_register_file:register_file|registers[0][0]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -3502,7 +3499,7 @@ TRANSITION_LIST("crp16_register_file:register_file|registers[1][15]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -3511,7 +3508,7 @@ TRANSITION_LIST("crp16_register_file:register_file|registers[1][14]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -3520,7 +3517,7 @@ TRANSITION_LIST("crp16_register_file:register_file|registers[1][13]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -3529,7 +3526,7 @@ TRANSITION_LIST("crp16_register_file:register_file|registers[1][12]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -3538,7 +3535,7 @@ TRANSITION_LIST("crp16_register_file:register_file|registers[1][11]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -3547,7 +3544,7 @@ TRANSITION_LIST("crp16_register_file:register_file|registers[1][10]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -3556,7 +3553,7 @@ TRANSITION_LIST("crp16_register_file:register_file|registers[1][9]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -3565,7 +3562,7 @@ TRANSITION_LIST("crp16_register_file:register_file|registers[1][8]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -3574,7 +3571,7 @@ TRANSITION_LIST("crp16_register_file:register_file|registers[1][7]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -3583,7 +3580,7 @@ TRANSITION_LIST("crp16_register_file:register_file|registers[1][6]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -3592,7 +3589,7 @@ TRANSITION_LIST("crp16_register_file:register_file|registers[1][5]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -3601,7 +3598,7 @@ TRANSITION_LIST("crp16_register_file:register_file|registers[1][4]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -3610,7 +3607,7 @@ TRANSITION_LIST("crp16_register_file:register_file|registers[1][3]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -3619,7 +3616,7 @@ TRANSITION_LIST("crp16_register_file:register_file|registers[1][2]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -3628,7 +3625,7 @@ TRANSITION_LIST("crp16_register_file:register_file|registers[1][1]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -3637,7 +3634,7 @@ TRANSITION_LIST("crp16_register_file:register_file|registers[1][0]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -3646,7 +3643,7 @@ TRANSITION_LIST("crp16_register_file:register_file|registers[2][15]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -3655,7 +3652,7 @@ TRANSITION_LIST("crp16_register_file:register_file|registers[2][14]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -3664,7 +3661,7 @@ TRANSITION_LIST("crp16_register_file:register_file|registers[2][13]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -3673,7 +3670,7 @@ TRANSITION_LIST("crp16_register_file:register_file|registers[2][12]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -3682,7 +3679,7 @@ TRANSITION_LIST("crp16_register_file:register_file|registers[2][11]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -3691,7 +3688,7 @@ TRANSITION_LIST("crp16_register_file:register_file|registers[2][10]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -3700,7 +3697,7 @@ TRANSITION_LIST("crp16_register_file:register_file|registers[2][9]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -3709,7 +3706,7 @@ TRANSITION_LIST("crp16_register_file:register_file|registers[2][8]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -3718,7 +3715,7 @@ TRANSITION_LIST("crp16_register_file:register_file|registers[2][7]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -3727,7 +3724,7 @@ TRANSITION_LIST("crp16_register_file:register_file|registers[2][6]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -3736,7 +3733,7 @@ TRANSITION_LIST("crp16_register_file:register_file|registers[2][5]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -3745,7 +3742,7 @@ TRANSITION_LIST("crp16_register_file:register_file|registers[2][4]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -3754,7 +3751,7 @@ TRANSITION_LIST("crp16_register_file:register_file|registers[2][3]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -3763,7 +3760,7 @@ TRANSITION_LIST("crp16_register_file:register_file|registers[2][2]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -3772,7 +3769,7 @@ TRANSITION_LIST("crp16_register_file:register_file|registers[2][1]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -3781,7 +3778,7 @@ TRANSITION_LIST("crp16_register_file:register_file|registers[2][0]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -3790,7 +3787,7 @@ TRANSITION_LIST("crp16_register_file:register_file|registers[3][15]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -3799,7 +3796,7 @@ TRANSITION_LIST("crp16_register_file:register_file|registers[3][14]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -3808,7 +3805,7 @@ TRANSITION_LIST("crp16_register_file:register_file|registers[3][13]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -3817,7 +3814,7 @@ TRANSITION_LIST("crp16_register_file:register_file|registers[3][12]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -3826,7 +3823,7 @@ TRANSITION_LIST("crp16_register_file:register_file|registers[3][11]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -3835,7 +3832,7 @@ TRANSITION_LIST("crp16_register_file:register_file|registers[3][10]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -3844,7 +3841,7 @@ TRANSITION_LIST("crp16_register_file:register_file|registers[3][9]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -3853,7 +3850,7 @@ TRANSITION_LIST("crp16_register_file:register_file|registers[3][8]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -3862,7 +3859,7 @@ TRANSITION_LIST("crp16_register_file:register_file|registers[3][7]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -3871,7 +3868,7 @@ TRANSITION_LIST("crp16_register_file:register_file|registers[3][6]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -3880,7 +3877,7 @@ TRANSITION_LIST("crp16_register_file:register_file|registers[3][5]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -3889,7 +3886,7 @@ TRANSITION_LIST("crp16_register_file:register_file|registers[3][4]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -3898,7 +3895,7 @@ TRANSITION_LIST("crp16_register_file:register_file|registers[3][3]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -3907,7 +3904,7 @@ TRANSITION_LIST("crp16_register_file:register_file|registers[3][2]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -3916,7 +3913,7 @@ TRANSITION_LIST("crp16_register_file:register_file|registers[3][1]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -3925,7 +3922,7 @@ TRANSITION_LIST("crp16_register_file:register_file|registers[3][0]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -3934,7 +3931,7 @@ TRANSITION_LIST("crp16_register_file:register_file|registers[4][15]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -3943,7 +3940,7 @@ TRANSITION_LIST("crp16_register_file:register_file|registers[4][14]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -3952,7 +3949,7 @@ TRANSITION_LIST("crp16_register_file:register_file|registers[4][13]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -3961,7 +3958,7 @@ TRANSITION_LIST("crp16_register_file:register_file|registers[4][12]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -3970,7 +3967,7 @@ TRANSITION_LIST("crp16_register_file:register_file|registers[4][11]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -3979,7 +3976,7 @@ TRANSITION_LIST("crp16_register_file:register_file|registers[4][10]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -3988,7 +3985,7 @@ TRANSITION_LIST("crp16_register_file:register_file|registers[4][9]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -3997,7 +3994,7 @@ TRANSITION_LIST("crp16_register_file:register_file|registers[4][8]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -4006,7 +4003,7 @@ TRANSITION_LIST("crp16_register_file:register_file|registers[4][7]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -4015,7 +4012,7 @@ TRANSITION_LIST("crp16_register_file:register_file|registers[4][6]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -4024,7 +4021,7 @@ TRANSITION_LIST("crp16_register_file:register_file|registers[4][5]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -4033,7 +4030,7 @@ TRANSITION_LIST("crp16_register_file:register_file|registers[4][4]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -4042,7 +4039,7 @@ TRANSITION_LIST("crp16_register_file:register_file|registers[4][3]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -4051,7 +4048,7 @@ TRANSITION_LIST("crp16_register_file:register_file|registers[4][2]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -4060,7 +4057,7 @@ TRANSITION_LIST("crp16_register_file:register_file|registers[4][1]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -4069,7 +4066,7 @@ TRANSITION_LIST("crp16_register_file:register_file|registers[4][0]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -4078,7 +4075,7 @@ TRANSITION_LIST("crp16_register_file:register_file|registers[5][15]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -4087,7 +4084,7 @@ TRANSITION_LIST("crp16_register_file:register_file|registers[5][14]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -4096,7 +4093,7 @@ TRANSITION_LIST("crp16_register_file:register_file|registers[5][13]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -4105,7 +4102,7 @@ TRANSITION_LIST("crp16_register_file:register_file|registers[5][12]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -4114,7 +4111,7 @@ TRANSITION_LIST("crp16_register_file:register_file|registers[5][11]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -4123,7 +4120,7 @@ TRANSITION_LIST("crp16_register_file:register_file|registers[5][10]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -4132,7 +4129,7 @@ TRANSITION_LIST("crp16_register_file:register_file|registers[5][9]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -4141,7 +4138,7 @@ TRANSITION_LIST("crp16_register_file:register_file|registers[5][8]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -4150,7 +4147,7 @@ TRANSITION_LIST("crp16_register_file:register_file|registers[5][7]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -4159,7 +4156,7 @@ TRANSITION_LIST("crp16_register_file:register_file|registers[5][6]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -4168,7 +4165,7 @@ TRANSITION_LIST("crp16_register_file:register_file|registers[5][5]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -4177,7 +4174,7 @@ TRANSITION_LIST("crp16_register_file:register_file|registers[5][4]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -4186,7 +4183,7 @@ TRANSITION_LIST("crp16_register_file:register_file|registers[5][3]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -4195,7 +4192,7 @@ TRANSITION_LIST("crp16_register_file:register_file|registers[5][2]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -4204,7 +4201,7 @@ TRANSITION_LIST("crp16_register_file:register_file|registers[5][1]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -4213,7 +4210,7 @@ TRANSITION_LIST("crp16_register_file:register_file|registers[5][0]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -4222,7 +4219,7 @@ TRANSITION_LIST("crp16_register_file:register_file|registers[6][15]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -4231,7 +4228,7 @@ TRANSITION_LIST("crp16_register_file:register_file|registers[6][14]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -4240,7 +4237,7 @@ TRANSITION_LIST("crp16_register_file:register_file|registers[6][13]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -4249,7 +4246,7 @@ TRANSITION_LIST("crp16_register_file:register_file|registers[6][12]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -4258,7 +4255,7 @@ TRANSITION_LIST("crp16_register_file:register_file|registers[6][11]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -4267,7 +4264,7 @@ TRANSITION_LIST("crp16_register_file:register_file|registers[6][10]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -4276,7 +4273,7 @@ TRANSITION_LIST("crp16_register_file:register_file|registers[6][9]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -4285,7 +4282,7 @@ TRANSITION_LIST("crp16_register_file:register_file|registers[6][8]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -4294,7 +4291,7 @@ TRANSITION_LIST("crp16_register_file:register_file|registers[6][7]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -4303,7 +4300,7 @@ TRANSITION_LIST("crp16_register_file:register_file|registers[6][6]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -4312,7 +4309,7 @@ TRANSITION_LIST("crp16_register_file:register_file|registers[6][5]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -4321,7 +4318,7 @@ TRANSITION_LIST("crp16_register_file:register_file|registers[6][4]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -4330,7 +4327,7 @@ TRANSITION_LIST("crp16_register_file:register_file|registers[6][3]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -4339,7 +4336,7 @@ TRANSITION_LIST("crp16_register_file:register_file|registers[6][2]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -4348,7 +4345,7 @@ TRANSITION_LIST("crp16_register_file:register_file|registers[6][1]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -4357,7 +4354,7 @@ TRANSITION_LIST("crp16_register_file:register_file|registers[6][0]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -4366,7 +4363,7 @@ TRANSITION_LIST("crp16_register_file:register_file|registers[7][15]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -4375,7 +4372,7 @@ TRANSITION_LIST("crp16_register_file:register_file|registers[7][14]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -4384,7 +4381,7 @@ TRANSITION_LIST("crp16_register_file:register_file|registers[7][13]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -4393,7 +4390,7 @@ TRANSITION_LIST("crp16_register_file:register_file|registers[7][12]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -4402,7 +4399,7 @@ TRANSITION_LIST("crp16_register_file:register_file|registers[7][11]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -4411,7 +4408,7 @@ TRANSITION_LIST("crp16_register_file:register_file|registers[7][10]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -4420,7 +4417,7 @@ TRANSITION_LIST("crp16_register_file:register_file|registers[7][9]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -4429,7 +4426,7 @@ TRANSITION_LIST("crp16_register_file:register_file|registers[7][8]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -4438,7 +4435,7 @@ TRANSITION_LIST("crp16_register_file:register_file|registers[7][7]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -4447,7 +4444,7 @@ TRANSITION_LIST("crp16_register_file:register_file|registers[7][6]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -4456,7 +4453,7 @@ TRANSITION_LIST("crp16_register_file:register_file|registers[7][5]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -4465,7 +4462,7 @@ TRANSITION_LIST("crp16_register_file:register_file|registers[7][4]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -4474,7 +4471,7 @@ TRANSITION_LIST("crp16_register_file:register_file|registers[7][3]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -4483,7 +4480,7 @@ TRANSITION_LIST("crp16_register_file:register_file|registers[7][2]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -4492,7 +4489,7 @@ TRANSITION_LIST("crp16_register_file:register_file|registers[7][1]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -4501,7 +4498,7 @@ TRANSITION_LIST("crp16_register_file:register_file|registers[7][0]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -4510,7 +4507,7 @@ TRANSITION_LIST("stage[1]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -4519,7 +4516,7 @@ TRANSITION_LIST("stage[0]")
 	NODE
 	{
 		REPEAT = 1;
-		LEVEL 0 FOR 800.0;
+		LEVEL U FOR 640.0;
 	}
 }
 
@@ -5556,7 +5553,7 @@ DISPLAY_LINE
 {
 	CHANNEL = "stage";
 	EXPAND_STATUS = COLLAPSED;
-	RADIX = Unsigned;
+	RADIX = Hexadecimal;
 	TREE_INDEX = 103;
 	TREE_LEVEL = 0;
 	CHILDREN = 104, 105;
@@ -5566,7 +5563,7 @@ DISPLAY_LINE
 {
 	CHANNEL = "stage[1]";
 	EXPAND_STATUS = COLLAPSED;
-	RADIX = Unsigned;
+	RADIX = Hexadecimal;
 	TREE_INDEX = 104;
 	TREE_LEVEL = 1;
 	PARENT = 103;
@@ -5576,7 +5573,7 @@ DISPLAY_LINE
 {
 	CHANNEL = "stage[0]";
 	EXPAND_STATUS = COLLAPSED;
-	RADIX = Unsigned;
+	RADIX = Hexadecimal;
 	TREE_INDEX = 105;
 	TREE_LEVEL = 1;
 	PARENT = 103;
