@@ -155,7 +155,8 @@ module crp16_datapath (
     
     assign dc_rf_a_sel = `REGA(dc_instr);
     
-    assign dc_rf_b_sel = `JUMPC_INSTR(dc_instr) | `LOADHI_INSTR(dc_instr) ? 
+    assign dc_rf_b_sel = `JUMPC_INSTR(dc_instr) | `LOADHI_INSTR(dc_instr) |
+                         `STORE_INSTR(dc_instr) ? 
                          `REGD(dc_instr) : `REGB(dc_instr);
                            
     assign dc_reg_a_in = dc_rf_a_out;
@@ -216,7 +217,7 @@ module crp16_datapath (
     
     // Writes 0xdead to register for easy error detection
     assign wb_reg_d_data = `CALL_INSTR(wb_instr) ? wb_pc : 
-                           `LOAD_INSTR(wb_instr) ? em_mem_data_out : 
+                           `LOAD_INSTR(wb_instr) ? wb_mem_reg :
                            (`ALU_INSTR(wb_instr) | `LOADIMM_INSTR(wb_instr) |
                            `LOADHI_INSTR (wb_instr)) ? wb_alu_reg :
                            16'hdead;
