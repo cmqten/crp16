@@ -7,7 +7,6 @@ The CRP16 (Carl's RISC Processor 16-bit) is my attempt at creating a RISC archit
 ## Table of Contents
 
 * [Specifications](#specifications)
-* [Instruction Set](#instruction-set)
 * [Instruction Encoding](#instruction-encoding)
 * [Milestones](#milestones)
 
@@ -62,4 +61,8 @@ The CRP16 (Carl's RISC Processor 16-bit) is my attempt at creating a RISC archit
 
 ### Dec 30, 2017
   - Implemented 4-stage, non-pipelined datapath
-  - Instructions implemented : add, addi, and, andi, asr, asri, call, callr, j, jnz, jr, jrnz, jrz, jz, ldhi, ldi, ldsi, lsl, lsli, lsr, lsri, noop, or, ori, sub, subi, xor, xori
+  - Instructions implemented : 
+  add, subtract, logical shift right, arithmetic shift right, logical shift left, and, or, xor, call subroutine, conditional jump, unconditional jump, load immediate, load signed immediate, load immediate to high byte
+
+### Dec 31, 2017
+  - Implemented load word and store word
