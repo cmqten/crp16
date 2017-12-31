@@ -39,11 +39,12 @@ The CRP16 (Carl's RISC Processor 16-bit) is my attempt at creating a RISC archit
 | ALUOp | ALU select bits |
 | C | Condition, 0 for zero, 1 for non-zero |
 | S | Signed, 0 for unsigned, 1 for signed |
-| Ra | Operand A register, address A register |
+| Ra | Operand A register, address register |
 | Rb | Operand B register |
 | Rc | Condition register |
 | Rd | Result destination register, data register |
 | W | Data size, 0 for byte, 1 for word |
+| X | Don't care |
 
 | ALUOp chart | |
 | - | - |
