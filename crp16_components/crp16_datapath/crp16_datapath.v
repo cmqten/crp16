@@ -33,6 +33,8 @@ module crp16_datapath (
     `define CALL_INSTR(instr)       (instr[3:0] == 4'b1010)
     `define JUMPC_INSTR(instr)      (instr[2:0] == 3'b110)
     `define JUMPUC_INSTR(instr)     (instr[3:0] == 4'b0010)
+    `define BRANCH_INSTR(instr)     (`CALL_INSTR(instr) | `JUMPC_INSTR(instr) \
+                                    | `JUMPUC_INSTR(instr))
     `define LOAD_INSTR(instr)       (instr[5:0] == 6'b000001)
     `define LOADHI_INSTR(instr)     (instr[4:0] == 5'b10001)
     `define LOADIMM_INSTR(instr)    (instr[3:0] == 4'b1001)
@@ -41,18 +43,18 @@ module crp16_datapath (
     `define SLT_INSTR(instr)        (instr[3:0] == 4'b0100)
     `define STORE_INSTR(instr)      (instr[5:0] == 6'b100001)
     
-    // Other encoding
-    `define INSTR_ALUOP(instr)      (instr[4:2])
-    `define INSTR_BRANCHCOND(instr) (instr[3])
-    `define INSTR_BRANCHREG(instr)  (!instr[4])
-    `define INSTR_BYTEWORD(instr)   (instr[6])
-    `define INSTR_IMM(instr)        (instr[5])
-    `define INSTR_LINK(instr)       (instr[3])
-    `define INSTR_LOADSIGNED(instr) (instr[7])
-    `define INSTR_REGA(instr)       (instr[12:10])
-    `define INSTR_REGB(instr)       (instr[9:7])
-    `define INSTR_REGD(instr)       (instr[15:13])
-    `define INSTR_SIGNED(instr)     (instr[4])
+    // Encoding
+    `define ALUOP(instr)        (instr[4:2])
+    `define BRANCHCOND(instr)   (instr[3])
+    `define BRANCHREG(instr)    (!instr[4])
+    `define BYTEWORD(instr)     (instr[6])
+    `define IMM(instr)          (instr[5])
+    `define LINK(instr)         (instr[3])
+    `define LOADSIGNED(instr)   (instr[7])
+    `define REGA(instr)         (instr[12:10])
+    `define REGB(instr)         (instr[9:7])
+    `define REGD(instr)         (instr[15:13])
+    `define SIGNED(instr)       (instr[4])
     
     // Immediates
     // SEb : sign extend b-bit immediate
@@ -143,7 +145,7 @@ module crp16_datapath (
     Fetch Stage Logic
     ==========================================================================*/
     
-    assign if_next_addr = if_mem_addr + 1;
+    assign if_next_addr = if_mem_addr + 16'd1;
     assign if_mem_addr = if_pc_src ? if_branch_addr : if_pc;
     
     
@@ -151,69 +153,51 @@ module crp16_datapath (
     Decode Stage Logic
     ==========================================================================*/
     
-    assign dc_rf_a_sel = `INSTR_REGA(dc_instr);
+    assign dc_rf_a_sel = `REGA(dc_instr);
     
-    assign dc_rf_b_sel = `JUMPC_INSTR(dc_instr) | `LOADHI_INSTR(dc_instr) ? 
-                         `INSTR_REGD(dc_instr) : `INSTR_REGB(dc_instr);
+    assign dc_rf_b_sel = `JUMPC_INSTR(dc_instr) | `LOADHI_INSTR(dc_instr) |
+                         `STORE_INSTR(dc_instr) ? 
+                         `REGD(dc_instr) : `REGB(dc_instr);
                            
     assign dc_reg_a_in = dc_rf_a_out;
     assign dc_reg_b_in = dc_rf_b_out;
     
-    // Branch resolution
-    //
-    // Branch addresses sources:
-    //   Register A : Instruction is not an immediate instruction
-    //   PC + SE8 : Conditional jump on immediate offset
-    //   PC + SE11 : Unconditional branch (jump/call) on immediate offset
-    //
-    // PC source :
-    //   Branch address : During unconditional jump/call or conditional jump 
-    //     where the condition register matches the jump condition 
-    //     (zero/non-zero)
-    //   PC + 1 : For every other instruction
-    assign if_branch_addr = `INSTR_BRANCHREG(dc_instr) ? dc_reg_a_in :
-                            `CALL_INSTR(dc_instr) ? dc_pc + `SE11(dc_instr) :
+    // Branch address is 0xdead if not a branch instruction for easy error 
+    // detection
+    assign if_branch_addr = !`BRANCH_INSTR(dc_instr) ? 16'hdead :
+                            `BRANCHREG(dc_instr) ? dc_reg_a_in :
                             `JUMPC_INSTR(dc_instr) ? dc_pc + `SE8(dc_instr) :
-                            `JUMPUC_INSTR(dc_instr) ? dc_pc + `SE11(dc_instr) :
-                             16'b0;
+                            dc_pc + `SE11(dc_instr);
                          
     assign if_pc_src = `CALL_INSTR(dc_instr) | `JUMPUC_INSTR(dc_instr) |
                        (`JUMPC_INSTR(dc_instr) & 
-                       (`INSTR_BRANCHCOND(dc_instr) == (|dc_reg_b_in)));
+                       (`BRANCHCOND(dc_instr) == (|dc_reg_b_in)));
     
     
     /*==========================================================================
     Execute or Memory Stage Logic
     ==========================================================================*/
     
-    // Load immediate uses the 8-bit immediate
     assign em_imm = `LOADIMM_INSTR(em_instr) ?
-                     (`INSTR_SIGNED(em_instr) ? `SE8(em_instr) : 
-                                                `ZE8(em_instr)) :
-    
-    // - Other instructions that are not load immediate use the 4-bit immediate
-    // - Branch immediate values don't matter because branching doesn't use ALU
-                     (`INSTR_SIGNED(em_instr) ? `SE4(em_instr) : 
-                                                `ZE4(em_instr));
-    
-    // - Load hi uses the ALU by adding the 8-bit immediate in the higher byte 
-    //     and the lower byte of register b
-    // - Load immediate uses the ALU by adding 0 and the 8-bit immediate
+                     (`SIGNED(em_instr) ? `SE8(em_instr) : `ZE8(em_instr)) :
+                     
+                    `ALU_INSTR(em_instr) ?
+                    (`SIGNED(em_instr) ? `SE4(em_instr) : `ZE4(em_instr)) :
+                    
+                    16'h0;
+               
     assign em_alu_a = `LOADHI_INSTR(em_instr) ? `HI8(em_instr) :
                       `LOADIMM_INSTR(em_instr) ? 16'b0 : 
                       em_reg_a;
     
-    
     assign em_alu_b = `LOADHI_INSTR(em_instr) ? em_reg_b[7:0] :
-                      `LOADIMM_INSTR(em_instr) | `INSTR_IMM(em_instr) ? em_imm : 
+                      `LOADIMM_INSTR(em_instr) | `IMM(em_instr) ? em_imm : 
                       em_reg_b;
     
-    // - Subtraction for slt/sgt to get the result from the alu flags
-    // - Addition for load immediate to add 8-bit immediate with 0
-    // - Addition for load to add 8-bit immediate in the higher byte and lower 
-    //     byte of register b
-    // - Doesn't matter for everything else 
-    assign em_alu_op = `ALU_INSTR(em_instr) ? `INSTR_ALUOP(em_instr) :
+    // - Subtraction for slt/sgt to get result from ALU flags
+    // - Addition for ldi/ldhi for obvious reasons
+    // - Doesn't matter for everything else
+    assign em_alu_op = `ALU_INSTR(em_instr) ? `ALUOP(em_instr) :
                        `SGT_INSTR(em_instr) ? 3'b001 : 
                        `SLT_INSTR(em_instr) ? 3'b001 : 
                        3'b000; 
@@ -229,11 +213,14 @@ module crp16_datapath (
     ==========================================================================*/
     
     assign wb_reg_d_sel = `CALL_INSTR(wb_instr) ? 
-                          LINK_REG : `INSTR_REGD(wb_instr);
+                          LINK_REG : `REGD(wb_instr);
     
+    // Writes 0xdead to register for easy error detection
     assign wb_reg_d_data = `CALL_INSTR(wb_instr) ? wb_pc : 
-                           `LOAD_INSTR(wb_instr) ? em_mem_data_out : 
-                           wb_alu_reg;
+                           `LOAD_INSTR(wb_instr) ? wb_mem_reg :
+                           (`ALU_INSTR(wb_instr) | `LOADIMM_INSTR(wb_instr) |
+                           `LOADHI_INSTR (wb_instr)) ? wb_alu_reg :
+                           16'hdead;
     
     assign wb_reg_write = (stage == WB) & (`ALU_INSTR(wb_instr) | 
                           `LOADIMM_INSTR(wb_instr) | `LOAD_INSTR(wb_instr) | 
