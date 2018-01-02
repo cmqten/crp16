@@ -3,10 +3,11 @@
 
 `include "../crp16_alu/crp16_alu.v"
 `include "../crp16_register_file/crp16_register_file.v"
-`include "../../crp16_subcomponents/register_16_bit/register_16_bit.v"
+`include "../../crp16_subcomponents/reg_module/reg_module.v"
 
 module crp16_datapath (
     input           clock,
+    input           reset,
     
     // Asynchronous Dual-Port RAM interface
     output  [15:0]  address_a,
@@ -81,35 +82,63 @@ module crp16_datapath (
     Data/Control Wires, Pipeline Registers
     ==========================================================================*/
     
-    reg     [1:0]   stage = 2'd0;
+    wire    [1:0]   stage;
+    reg_module #(2) stage_r(stage + 1, stage, 1, clock, reset);
     
-    // Stage 0 : Instruction Fetch 
-    reg     [15:0]  if_pc;
-    wire    [15:0]  if_instr, if_mem_addr;
-    wire    [15:0]  if_branch_addr, if_next_addr;
+    // Stage 0 : Instruction Fetch
+    wire    [15:0]  if_instr, if_pc;
+    wire            if_pc_wren;
+    
+    wire    [15:0]  if_branch_addr, if_mem_addr, if_next_addr;
     wire            if_pc_src;
     
+    reg_module if_pc_r(if_next_addr, if_pc, if_pc_wren, clock, reset);
+    
+    
     // Stage 1 : Instruction Decode 
-    reg     [15:0]  dc_instr, dc_pc;
+    wire    [15:0]  dc_instr, dc_pc;
+    wire            dc_instr_wren, dc_pc_wren;
+    wire    [15:0]  dc_reg_a, dc_reg_b;
+    wire            dc_reg_ab_wren;
+    
     wire    [15:0]  dc_reg_a_in, dc_reg_b_in, dc_rf_a_out, dc_rf_b_out;
     wire    [2:0]   dc_rf_a_sel, dc_rf_b_sel;
     
+    reg_module dc_instr_r(if_instr, dc_instr, dc_instr_wren, clock, reset);
+    reg_module dc_pc_r(if_next_addr, dc_pc, dc_pc_wren, clock, reset);
+    reg_module dc_reg_a_r(dc_reg_a_in, dc_reg_a, dc_reg_ab_wren, clock, reset);
+    reg_module dc_reg_b_r(dc_reg_b_in, dc_reg_b, dc_reg_ab_wren, clock, reset);
+    
     // Stage 2 : Execute or Memory 
-    reg     [15:0]  em_instr, em_pc;
-    reg     [15:0]  em_reg_a, em_reg_b;
+    wire    [15:0]  em_instr, em_pc;
+    wire            em_instr_wren, em_pc_wren;
+    wire    [15:0]  em_alu_reg, em_mem_reg;
+    wire            em_alu_reg_wren, em_mem_reg_wren;
+    
     wire    [15:0]  em_alu_a, em_alu_b, em_alu_out, em_imm;
     wire    [2:0]   em_alu_op;
     wire            em_v, em_c, em_n, em_z;
     
     wire    [15:0]  em_mem_data_in, em_mem_data_out, em_mem_addr;
-    wire            em_mem_read, em_mem_write;
+    wire            em_mem_write;
+    
+    reg_module em_instr_r(dc_instr, em_instr, em_instr_wren, clock, reset);
+    reg_module em_pc_r(dc_pc, em_pc, em_pc_wren, clock, reset);
+    reg_module em_alu_reg_r(em_alu_out, em_alu_reg, em_alu_reg_wren, 
+        clock, reset);
+    reg_module em_mem_reg_r(em_mem_data_out, em_mem_reg, em_mem_reg_wren, 
+        clock, reset);
     
     // Stage 3 : Register Writeback 
-    reg     [15:0]  wb_instr, wb_pc;
-    reg     [15:0]  wb_alu_reg, wb_mem_reg;
+    wire    [15:0]  wb_instr, wb_pc;
+    wire            wb_instr_wren, wb_pc_wren;
+    
     wire    [15:0]  wb_reg_d_data;
     wire    [2:0]   wb_reg_d_sel;
     wire            wb_reg_write;
+    
+    reg_module wb_instr_r(em_instr, wb_instr, wb_instr_wren, clock, reset);
+    reg_module wb_pc_r(em_pc, wb_pc, wb_pc_wren, clock, reset);
     
     
     /*==========================================================================
@@ -118,17 +147,18 @@ module crp16_datapath (
     
     // ALU 
     crp16_alu alu (
-        .op_a(em_alu_a), .op_b(em_alu_b), .op_sel(em_alu_op), .alu_out(em_alu_out),
-        .v(em_v), .c(em_c), .n(em_n), .z(em_z)
+        .op_a(em_alu_a), .op_b(em_alu_b), .op_sel(em_alu_op), 
+        .alu_out(em_alu_out),.v(em_v), .c(em_c), .n(em_n), .z(em_z)
     );
     
     // Register File 
     crp16_register_file register_file (
-        .clock(clock), 
+        .clock(clock), .reset(reset),
         .a_sel(dc_rf_a_sel), .a_val(dc_rf_a_out),
         .b_sel(dc_rf_b_sel), .b_val(dc_rf_b_out),
         .c_sel(reg_sel), .c_val(reg_view),
-        .write_sel(wb_reg_d_sel), .write_val(wb_reg_d_data), .write(wb_reg_write)
+        .write_sel(wb_reg_d_sel), .write_val(wb_reg_d_data), 
+        .write(wb_reg_write)
     );
     
     // Memory
@@ -147,12 +177,15 @@ module crp16_datapath (
     
     assign if_next_addr = if_mem_addr + 16'd1;
     assign if_mem_addr = if_pc_src ? if_branch_addr : if_pc;
+    assign if_pc_wren = stage == IF;
     
     
     /*==========================================================================
     Decode Stage Logic
     ==========================================================================*/
     
+    assign dc_instr_wren = stage == IF;
+    assign dc_pc_wren = stage == IF;
     assign dc_rf_a_sel = `REGA(dc_instr);
     
     assign dc_rf_b_sel = `JUMPC_INSTR(dc_instr) | `LOADHI_INSTR(dc_instr) |
@@ -161,6 +194,7 @@ module crp16_datapath (
                            
     assign dc_reg_a_in = dc_rf_a_out;
     assign dc_reg_b_in = dc_rf_b_out;
+    assign dc_reg_ab_wren = stage == DC;
     
     // Branch address is 0xdead if not a branch instruction for easy error 
     // detection
@@ -178,6 +212,9 @@ module crp16_datapath (
     Execute or Memory Stage Logic
     ==========================================================================*/
     
+    assign em_instr_wren = stage == DC;
+    assign em_pc_wren = stage == DC;
+    
     assign em_imm = `LOADIMM_INSTR(em_instr) ?
                      (`SIGNED(em_instr) ? `SE8(em_instr) : `ZE8(em_instr)) :
                      
@@ -188,11 +225,11 @@ module crp16_datapath (
                
     assign em_alu_a = `LOADHI_INSTR(em_instr) ? `HI8(em_instr) :
                       `LOADIMM_INSTR(em_instr) ? 16'b0 : 
-                      em_reg_a;
+                      dc_reg_a;
     
-    assign em_alu_b = `LOADHI_INSTR(em_instr) ? em_reg_b[7:0] :
+    assign em_alu_b = `LOADHI_INSTR(em_instr) ? dc_reg_b[7:0] :
                       `LOADIMM_INSTR(em_instr) | `IMM(em_instr) ? em_imm : 
-                      em_reg_b;
+                      dc_reg_b;
     
     // - Subtraction for slt/sgt to get result from ALU flags
     // - Addition for ldi/ldhi for obvious reasons
@@ -202,62 +239,33 @@ module crp16_datapath (
                        `SLT_INSTR(em_instr) ? 3'b001 : 
                        3'b000; 
     
-    assign em_mem_data_in = em_reg_b;
-    assign em_mem_addr = em_reg_a;
-    assign em_mem_read = (stage == EM) & `LOAD_INSTR(em_instr);
+    assign em_mem_data_in = dc_reg_b;
+    assign em_mem_addr = dc_reg_a;
     assign em_mem_write = (stage == EM) & `STORE_INSTR(em_instr);
+    assign em_alu_reg_wren = stage == EM;
+    assign em_mem_reg_wren = stage == EM;
     
     
     /*==========================================================================
     Writeback Stage Logic
     ==========================================================================*/
     
+    assign wb_instr_wren = stage == EM;
+    assign wb_pc_wren = stage == EM;
+    
     assign wb_reg_d_sel = `CALL_INSTR(wb_instr) ? 
                           LINK_REG : `REGD(wb_instr);
     
     // Writes 0xdead to register for easy error detection
     assign wb_reg_d_data = `CALL_INSTR(wb_instr) ? wb_pc : 
-                           `LOAD_INSTR(wb_instr) ? wb_mem_reg :
+                           `LOAD_INSTR(wb_instr) ? em_mem_reg :
                            (`ALU_INSTR(wb_instr) | `LOADIMM_INSTR(wb_instr) |
-                           `LOADHI_INSTR (wb_instr)) ? wb_alu_reg :
+                           `LOADHI_INSTR (wb_instr)) ? em_alu_reg :
                            16'hdead;
     
     assign wb_reg_write = (stage == WB) & (`ALU_INSTR(wb_instr) | 
                           `LOADIMM_INSTR(wb_instr) | `LOAD_INSTR(wb_instr) | 
-                          `LOADHI_INSTR(wb_instr) | `CALL_INSTR(wb_instr));
-                
-                
-    always @(posedge clock)
-    begin
-        case (stage[1:0])
-            2'd0:
-            begin
-                dc_instr <= if_instr;
-                if_pc <= if_next_addr;
-                dc_pc <= if_next_addr;
-            end
-            
-            2'd1:
-            begin
-                em_instr <= dc_instr;
-                em_pc <= dc_pc;
-                em_reg_a <= dc_reg_a_in;
-                em_reg_b <= dc_reg_b_in;
-            end
-            
-            2'd2:
-            begin
-                wb_instr <= em_instr;
-                wb_pc <= em_pc;
-                wb_alu_reg <= em_alu_out;
-                wb_mem_reg <= em_mem_data_out;
-            end
-            
-            2'd3:;
-        endcase
-        
-        stage <= stage + 2'd1;
-    end
+                          `LOADHI_INSTR(wb_instr) | `CALL_INSTR(wb_instr));             
     
     assign dc_instr_view = dc_instr;
     
