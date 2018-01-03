@@ -14,8 +14,8 @@ The CRP16 (Carl's RISC Processor 16-bit) is my attempt at creating a RISC archit
 - 16-bit instructions
 - 8 16-bit general-purpose registers
 - Word addressable memory
-- Harvard architecture *
-- 4-stage pipeline with data forwarding and early branch resolve for zero pipeline bubbles *
+- Harvard architecture
+- 4-stage pipeline with data forwarding and branch resolve at decode stage for zero pipeline bubbles
 
 ## Instruction Encoding
 
@@ -35,17 +35,18 @@ The CRP16 (Carl's RISC Processor 16-bit) is my attempt at creating a RISC archit
 | Load immediate to higher byte of register while preserving lower byte <td colspan=3>Rd <td colspan=8>8-bit immediate <td colspan=1>1 <td colspan=1>0 <td colspan=1>0 <td colspan=1>0 <td colspan=1>1 |
 | Load from memory to register <td colspan=3>Rd <td colspan=3>Ra <td colspan=1>X <td colspan=1>X <td colspan=1>S <td colspan=1>W <td colspan=1>0 <td colspan=1>0 <td colspan=1>0 <td colspan=1>0 <td colspan=1>0 <td colspan=1>1 |
 | Store from register to memory <td colspan=3>Rd <td colspan=3>Ra <td colspan=1>X <td colspan=1>X <td colspan=1>X <td colspan=1>W <td colspan=1>1 <td colspan=1>0 <td colspan=1>0 <td colspan=1>0 <td colspan=1>0 <td colspan=1>1 |
+| Terminate execution <td colspan=1>1 <td colspan=1>0 <td colspan=1>0 <td colspan=1>0 <td colspan=1>0 <td colspan=1>0 <td colspan=1>0 <td colspan=1>0 <td colspan=1>0 <td colspan=1>0 <td colspan=1>0 <td colspan=1>0 <td colspan=1>0 <td colspan=1>0 <td colspan=1>0 <td colspan=1>0 |
   
 | Symbol Chart | |
 | - | - |
 | ALUOp | ALU select bits |
 | C | Branch condition : 0 for zero, 1 for non-zero |
 | G | Compare : 0 for less than, 1 for greater than |
-| S | Signed operation : 0 for unsigned, 1 for signed |
 | Ra | Operand A register, address register |
 | Rb | Operand B register |
 | Rc | Condition register |
 | Rd | Result destination register, data register |
+| S | Signed operation : 0 for unsigned, 1 for signed |
 | W | Data size : 0 for byte, 1 for word |
 | X | Don't care |
 
@@ -80,3 +81,6 @@ The CRP16 (Carl's RISC Processor 16-bit) is my attempt at creating a RISC archit
 
 ### Jan 2, 2018
   - Implemented greater than and less than
+
+### Jan 3, 2018
+  - Implemented instruction pipelining
