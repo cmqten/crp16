@@ -18,7 +18,7 @@ module crp16_processor (
 
     wire    [15:0]  address_a, address_b, data_a, data_b, q_a, q_b;
     wire            wren_a, wren_b, mem_clock, reset;
-    wire    [15:0]  hex_in, reg_view, instr_view;
+    wire    [15:0]  hex_in, reg_view, instr_view, pc_view;
     
     assign reset = ~KEY[1];
     
@@ -38,11 +38,11 @@ module crp16_processor (
         .q_a(q_a),                  .q_b(q_b),       
         .mem_clock(mem_clock),
         .reg_sel(SW[2:0]),          .reg_view(reg_view), 
-        .dc_instr_view(instr_view)
+        .instr_view(instr_view),    .pc_view(pc_view)
     );
     
-    hex_decoder addrlo(address_a[3:0], HEX4);
-    hex_decoder addrhi(address_a[4], HEX5);
+    hex_decoder addrlo(pc_view[3:0], HEX4);
+    hex_decoder addrhi(pc_view[4], HEX5);
     hex_decoder h0(hex_in[3:0], HEX0);
     hex_decoder h1(hex_in[7:4], HEX1);
     hex_decoder h2(hex_in[11:8], HEX2);
