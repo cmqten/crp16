@@ -78,5 +78,5 @@ The CRP16 (Carl's RISC Processor 16-bit) is my attempt at creating a RISC archit
 ### Dec 31, 2017
   - Implemented load word and store word
 
-### Jan 2, 2017
+### Jan 2, 2018
   - Implemented greater than and less than
