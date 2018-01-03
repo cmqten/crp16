@@ -5054,7 +5054,7 @@ DISPLAY_LINE
 
 DISPLAY_LINE
 {
-	CHANNEL = "reg_module:em_pc_r|data_reg";
+	CHANNEL = "reg_module:dc_pc_r|data_reg";
 	EXPAND_STATUS = COLLAPSED;
 	RADIX = Hexadecimal;
 	TREE_INDEX = 19;
@@ -5064,7 +5064,7 @@ DISPLAY_LINE
 
 DISPLAY_LINE
 {
-	CHANNEL = "reg_module:em_pc_r|data_reg[15]";
+	CHANNEL = "reg_module:dc_pc_r|data_reg[15]";
 	EXPAND_STATUS = COLLAPSED;
 	RADIX = Hexadecimal;
 	TREE_INDEX = 20;
@@ -5074,7 +5074,7 @@ DISPLAY_LINE
 
 DISPLAY_LINE
 {
-	CHANNEL = "reg_module:em_pc_r|data_reg[14]";
+	CHANNEL = "reg_module:dc_pc_r|data_reg[14]";
 	EXPAND_STATUS = COLLAPSED;
 	RADIX = Hexadecimal;
 	TREE_INDEX = 21;
@@ -5084,7 +5084,7 @@ DISPLAY_LINE
 
 DISPLAY_LINE
 {
-	CHANNEL = "reg_module:em_pc_r|data_reg[13]";
+	CHANNEL = "reg_module:dc_pc_r|data_reg[13]";
 	EXPAND_STATUS = COLLAPSED;
 	RADIX = Hexadecimal;
 	TREE_INDEX = 22;
@@ -5094,7 +5094,7 @@ DISPLAY_LINE
 
 DISPLAY_LINE
 {
-	CHANNEL = "reg_module:em_pc_r|data_reg[12]";
+	CHANNEL = "reg_module:dc_pc_r|data_reg[12]";
 	EXPAND_STATUS = COLLAPSED;
 	RADIX = Hexadecimal;
 	TREE_INDEX = 23;
@@ -5104,7 +5104,7 @@ DISPLAY_LINE
 
 DISPLAY_LINE
 {
-	CHANNEL = "reg_module:em_pc_r|data_reg[11]";
+	CHANNEL = "reg_module:dc_pc_r|data_reg[11]";
 	EXPAND_STATUS = COLLAPSED;
 	RADIX = Hexadecimal;
 	TREE_INDEX = 24;
@@ -5114,7 +5114,7 @@ DISPLAY_LINE
 
 DISPLAY_LINE
 {
-	CHANNEL = "reg_module:em_pc_r|data_reg[10]";
+	CHANNEL = "reg_module:dc_pc_r|data_reg[10]";
 	EXPAND_STATUS = COLLAPSED;
 	RADIX = Hexadecimal;
 	TREE_INDEX = 25;
@@ -5124,7 +5124,7 @@ DISPLAY_LINE
 
 DISPLAY_LINE
 {
-	CHANNEL = "reg_module:em_pc_r|data_reg[9]";
+	CHANNEL = "reg_module:dc_pc_r|data_reg[9]";
 	EXPAND_STATUS = COLLAPSED;
 	RADIX = Hexadecimal;
 	TREE_INDEX = 26;
@@ -5134,7 +5134,7 @@ DISPLAY_LINE
 
 DISPLAY_LINE
 {
-	CHANNEL = "reg_module:em_pc_r|data_reg[8]";
+	CHANNEL = "reg_module:dc_pc_r|data_reg[8]";
 	EXPAND_STATUS = COLLAPSED;
 	RADIX = Hexadecimal;
 	TREE_INDEX = 27;
@@ -5144,7 +5144,7 @@ DISPLAY_LINE
 
 DISPLAY_LINE
 {
-	CHANNEL = "reg_module:em_pc_r|data_reg[7]";
+	CHANNEL = "reg_module:dc_pc_r|data_reg[7]";
 	EXPAND_STATUS = COLLAPSED;
 	RADIX = Hexadecimal;
 	TREE_INDEX = 28;
@@ -5154,7 +5154,7 @@ DISPLAY_LINE
 
 DISPLAY_LINE
 {
-	CHANNEL = "reg_module:em_pc_r|data_reg[6]";
+	CHANNEL = "reg_module:dc_pc_r|data_reg[6]";
 	EXPAND_STATUS = COLLAPSED;
 	RADIX = Hexadecimal;
 	TREE_INDEX = 29;
@@ -5164,7 +5164,7 @@ DISPLAY_LINE
 
 DISPLAY_LINE
 {
-	CHANNEL = "reg_module:em_pc_r|data_reg[5]";
+	CHANNEL = "reg_module:dc_pc_r|data_reg[5]";
 	EXPAND_STATUS = COLLAPSED;
 	RADIX = Hexadecimal;
 	TREE_INDEX = 30;
@@ -5174,7 +5174,7 @@ DISPLAY_LINE
 
 DISPLAY_LINE
 {
-	CHANNEL = "reg_module:em_pc_r|data_reg[4]";
+	CHANNEL = "reg_module:dc_pc_r|data_reg[4]";
 	EXPAND_STATUS = COLLAPSED;
 	RADIX = Hexadecimal;
 	TREE_INDEX = 31;
@@ -5184,7 +5184,7 @@ DISPLAY_LINE
 
 DISPLAY_LINE
 {
-	CHANNEL = "reg_module:em_pc_r|data_reg[3]";
+	CHANNEL = "reg_module:dc_pc_r|data_reg[3]";
 	EXPAND_STATUS = COLLAPSED;
 	RADIX = Hexadecimal;
 	TREE_INDEX = 32;
@@ -5194,7 +5194,7 @@ DISPLAY_LINE
 
 DISPLAY_LINE
 {
-	CHANNEL = "reg_module:em_pc_r|data_reg[2]";
+	CHANNEL = "reg_module:dc_pc_r|data_reg[2]";
 	EXPAND_STATUS = COLLAPSED;
 	RADIX = Hexadecimal;
 	TREE_INDEX = 33;
@@ -5204,7 +5204,7 @@ DISPLAY_LINE
 
 DISPLAY_LINE
 {
-	CHANNEL = "reg_module:em_pc_r|data_reg[1]";
+	CHANNEL = "reg_module:dc_pc_r|data_reg[1]";
 	EXPAND_STATUS = COLLAPSED;
 	RADIX = Hexadecimal;
 	TREE_INDEX = 34;
@@ -5214,7 +5214,7 @@ DISPLAY_LINE
 
 DISPLAY_LINE
 {
-	CHANNEL = "reg_module:em_pc_r|data_reg[0]";
+	CHANNEL = "reg_module:dc_pc_r|data_reg[0]";
 	EXPAND_STATUS = COLLAPSED;
 	RADIX = Hexadecimal;
 	TREE_INDEX = 35;
@@ -5224,7 +5224,7 @@ DISPLAY_LINE
 
 DISPLAY_LINE
 {
-	CHANNEL = "reg_module:em_instr_r|data_reg";
+	CHANNEL = "reg_module:dc_instr_r|data_reg";
 	EXPAND_STATUS = COLLAPSED;
 	RADIX = Binary;
 	TREE_INDEX = 36;
@@ -5234,7 +5234,7 @@ DISPLAY_LINE
 
 DISPLAY_LINE
 {
-	CHANNEL = "reg_module:em_instr_r|data_reg[15]";
+	CHANNEL = "reg_module:dc_instr_r|data_reg[15]";
 	EXPAND_STATUS = COLLAPSED;
 	RADIX = Binary;
 	TREE_INDEX = 37;
@@ -5244,7 +5244,7 @@ DISPLAY_LINE
 
 DISPLAY_LINE
 {
-	CHANNEL = "reg_module:em_instr_r|data_reg[14]";
+	CHANNEL = "reg_module:dc_instr_r|data_reg[14]";
 	EXPAND_STATUS = COLLAPSED;
 	RADIX = Binary;
 	TREE_INDEX = 38;
@@ -5254,7 +5254,7 @@ DISPLAY_LINE
 
 DISPLAY_LINE
 {
-	CHANNEL = "reg_module:em_instr_r|data_reg[13]";
+	CHANNEL = "reg_module:dc_instr_r|data_reg[13]";
 	EXPAND_STATUS = COLLAPSED;
 	RADIX = Binary;
 	TREE_INDEX = 39;
@@ -5264,7 +5264,7 @@ DISPLAY_LINE
 
 DISPLAY_LINE
 {
-	CHANNEL = "reg_module:em_instr_r|data_reg[12]";
+	CHANNEL = "reg_module:dc_instr_r|data_reg[12]";
 	EXPAND_STATUS = COLLAPSED;
 	RADIX = Binary;
 	TREE_INDEX = 40;
@@ -5274,7 +5274,7 @@ DISPLAY_LINE
 
 DISPLAY_LINE
 {
-	CHANNEL = "reg_module:em_instr_r|data_reg[11]";
+	CHANNEL = "reg_module:dc_instr_r|data_reg[11]";
 	EXPAND_STATUS = COLLAPSED;
 	RADIX = Binary;
 	TREE_INDEX = 41;
@@ -5284,7 +5284,7 @@ DISPLAY_LINE
 
 DISPLAY_LINE
 {
-	CHANNEL = "reg_module:em_instr_r|data_reg[10]";
+	CHANNEL = "reg_module:dc_instr_r|data_reg[10]";
 	EXPAND_STATUS = COLLAPSED;
 	RADIX = Binary;
 	TREE_INDEX = 42;
@@ -5294,7 +5294,7 @@ DISPLAY_LINE
 
 DISPLAY_LINE
 {
-	CHANNEL = "reg_module:em_instr_r|data_reg[9]";
+	CHANNEL = "reg_module:dc_instr_r|data_reg[9]";
 	EXPAND_STATUS = COLLAPSED;
 	RADIX = Binary;
 	TREE_INDEX = 43;
@@ -5304,7 +5304,7 @@ DISPLAY_LINE
 
 DISPLAY_LINE
 {
-	CHANNEL = "reg_module:em_instr_r|data_reg[8]";
+	CHANNEL = "reg_module:dc_instr_r|data_reg[8]";
 	EXPAND_STATUS = COLLAPSED;
 	RADIX = Binary;
 	TREE_INDEX = 44;
@@ -5314,7 +5314,7 @@ DISPLAY_LINE
 
 DISPLAY_LINE
 {
-	CHANNEL = "reg_module:em_instr_r|data_reg[7]";
+	CHANNEL = "reg_module:dc_instr_r|data_reg[7]";
 	EXPAND_STATUS = COLLAPSED;
 	RADIX = Binary;
 	TREE_INDEX = 45;
@@ -5324,7 +5324,7 @@ DISPLAY_LINE
 
 DISPLAY_LINE
 {
-	CHANNEL = "reg_module:em_instr_r|data_reg[6]";
+	CHANNEL = "reg_module:dc_instr_r|data_reg[6]";
 	EXPAND_STATUS = COLLAPSED;
 	RADIX = Binary;
 	TREE_INDEX = 46;
@@ -5334,7 +5334,7 @@ DISPLAY_LINE
 
 DISPLAY_LINE
 {
-	CHANNEL = "reg_module:em_instr_r|data_reg[5]";
+	CHANNEL = "reg_module:dc_instr_r|data_reg[5]";
 	EXPAND_STATUS = COLLAPSED;
 	RADIX = Binary;
 	TREE_INDEX = 47;
@@ -5344,7 +5344,7 @@ DISPLAY_LINE
 
 DISPLAY_LINE
 {
-	CHANNEL = "reg_module:em_instr_r|data_reg[4]";
+	CHANNEL = "reg_module:dc_instr_r|data_reg[4]";
 	EXPAND_STATUS = COLLAPSED;
 	RADIX = Binary;
 	TREE_INDEX = 48;
@@ -5354,7 +5354,7 @@ DISPLAY_LINE
 
 DISPLAY_LINE
 {
-	CHANNEL = "reg_module:em_instr_r|data_reg[3]";
+	CHANNEL = "reg_module:dc_instr_r|data_reg[3]";
 	EXPAND_STATUS = COLLAPSED;
 	RADIX = Binary;
 	TREE_INDEX = 49;
@@ -5364,7 +5364,7 @@ DISPLAY_LINE
 
 DISPLAY_LINE
 {
-	CHANNEL = "reg_module:em_instr_r|data_reg[2]";
+	CHANNEL = "reg_module:dc_instr_r|data_reg[2]";
 	EXPAND_STATUS = COLLAPSED;
 	RADIX = Binary;
 	TREE_INDEX = 50;
@@ -5374,7 +5374,7 @@ DISPLAY_LINE
 
 DISPLAY_LINE
 {
-	CHANNEL = "reg_module:em_instr_r|data_reg[1]";
+	CHANNEL = "reg_module:dc_instr_r|data_reg[1]";
 	EXPAND_STATUS = COLLAPSED;
 	RADIX = Binary;
 	TREE_INDEX = 51;
@@ -5384,7 +5384,7 @@ DISPLAY_LINE
 
 DISPLAY_LINE
 {
-	CHANNEL = "reg_module:em_instr_r|data_reg[0]";
+	CHANNEL = "reg_module:dc_instr_r|data_reg[0]";
 	EXPAND_STATUS = COLLAPSED;
 	RADIX = Binary;
 	TREE_INDEX = 52;
@@ -5394,7 +5394,7 @@ DISPLAY_LINE
 
 DISPLAY_LINE
 {
-	CHANNEL = "reg_module:dc_pc_r|data_reg";
+	CHANNEL = "reg_module:em_pc_r|data_reg";
 	EXPAND_STATUS = COLLAPSED;
 	RADIX = Hexadecimal;
 	TREE_INDEX = 53;
@@ -5404,7 +5404,7 @@ DISPLAY_LINE
 
 DISPLAY_LINE
 {
-	CHANNEL = "reg_module:dc_pc_r|data_reg[15]";
+	CHANNEL = "reg_module:em_pc_r|data_reg[15]";
 	EXPAND_STATUS = COLLAPSED;
 	RADIX = Hexadecimal;
 	TREE_INDEX = 54;
@@ -5414,7 +5414,7 @@ DISPLAY_LINE
 
 DISPLAY_LINE
 {
-	CHANNEL = "reg_module:dc_pc_r|data_reg[14]";
+	CHANNEL = "reg_module:em_pc_r|data_reg[14]";
 	EXPAND_STATUS = COLLAPSED;
 	RADIX = Hexadecimal;
 	TREE_INDEX = 55;
@@ -5424,7 +5424,7 @@ DISPLAY_LINE
 
 DISPLAY_LINE
 {
-	CHANNEL = "reg_module:dc_pc_r|data_reg[13]";
+	CHANNEL = "reg_module:em_pc_r|data_reg[13]";
 	EXPAND_STATUS = COLLAPSED;
 	RADIX = Hexadecimal;
 	TREE_INDEX = 56;
@@ -5434,7 +5434,7 @@ DISPLAY_LINE
 
 DISPLAY_LINE
 {
-	CHANNEL = "reg_module:dc_pc_r|data_reg[12]";
+	CHANNEL = "reg_module:em_pc_r|data_reg[12]";
 	EXPAND_STATUS = COLLAPSED;
 	RADIX = Hexadecimal;
 	TREE_INDEX = 57;
@@ -5444,7 +5444,7 @@ DISPLAY_LINE
 
 DISPLAY_LINE
 {
-	CHANNEL = "reg_module:dc_pc_r|data_reg[11]";
+	CHANNEL = "reg_module:em_pc_r|data_reg[11]";
 	EXPAND_STATUS = COLLAPSED;
 	RADIX = Hexadecimal;
 	TREE_INDEX = 58;
@@ -5454,7 +5454,7 @@ DISPLAY_LINE
 
 DISPLAY_LINE
 {
-	CHANNEL = "reg_module:dc_pc_r|data_reg[10]";
+	CHANNEL = "reg_module:em_pc_r|data_reg[10]";
 	EXPAND_STATUS = COLLAPSED;
 	RADIX = Hexadecimal;
 	TREE_INDEX = 59;
@@ -5464,7 +5464,7 @@ DISPLAY_LINE
 
 DISPLAY_LINE
 {
-	CHANNEL = "reg_module:dc_pc_r|data_reg[9]";
+	CHANNEL = "reg_module:em_pc_r|data_reg[9]";
 	EXPAND_STATUS = COLLAPSED;
 	RADIX = Hexadecimal;
 	TREE_INDEX = 60;
@@ -5474,7 +5474,7 @@ DISPLAY_LINE
 
 DISPLAY_LINE
 {
-	CHANNEL = "reg_module:dc_pc_r|data_reg[8]";
+	CHANNEL = "reg_module:em_pc_r|data_reg[8]";
 	EXPAND_STATUS = COLLAPSED;
 	RADIX = Hexadecimal;
 	TREE_INDEX = 61;
@@ -5484,7 +5484,7 @@ DISPLAY_LINE
 
 DISPLAY_LINE
 {
-	CHANNEL = "reg_module:dc_pc_r|data_reg[7]";
+	CHANNEL = "reg_module:em_pc_r|data_reg[7]";
 	EXPAND_STATUS = COLLAPSED;
 	RADIX = Hexadecimal;
 	TREE_INDEX = 62;
@@ -5494,7 +5494,7 @@ DISPLAY_LINE
 
 DISPLAY_LINE
 {
-	CHANNEL = "reg_module:dc_pc_r|data_reg[6]";
+	CHANNEL = "reg_module:em_pc_r|data_reg[6]";
 	EXPAND_STATUS = COLLAPSED;
 	RADIX = Hexadecimal;
 	TREE_INDEX = 63;
@@ -5504,7 +5504,7 @@ DISPLAY_LINE
 
 DISPLAY_LINE
 {
-	CHANNEL = "reg_module:dc_pc_r|data_reg[5]";
+	CHANNEL = "reg_module:em_pc_r|data_reg[5]";
 	EXPAND_STATUS = COLLAPSED;
 	RADIX = Hexadecimal;
 	TREE_INDEX = 64;
@@ -5514,7 +5514,7 @@ DISPLAY_LINE
 
 DISPLAY_LINE
 {
-	CHANNEL = "reg_module:dc_pc_r|data_reg[4]";
+	CHANNEL = "reg_module:em_pc_r|data_reg[4]";
 	EXPAND_STATUS = COLLAPSED;
 	RADIX = Hexadecimal;
 	TREE_INDEX = 65;
@@ -5524,7 +5524,7 @@ DISPLAY_LINE
 
 DISPLAY_LINE
 {
-	CHANNEL = "reg_module:dc_pc_r|data_reg[3]";
+	CHANNEL = "reg_module:em_pc_r|data_reg[3]";
 	EXPAND_STATUS = COLLAPSED;
 	RADIX = Hexadecimal;
 	TREE_INDEX = 66;
@@ -5534,7 +5534,7 @@ DISPLAY_LINE
 
 DISPLAY_LINE
 {
-	CHANNEL = "reg_module:dc_pc_r|data_reg[2]";
+	CHANNEL = "reg_module:em_pc_r|data_reg[2]";
 	EXPAND_STATUS = COLLAPSED;
 	RADIX = Hexadecimal;
 	TREE_INDEX = 67;
@@ -5544,7 +5544,7 @@ DISPLAY_LINE
 
 DISPLAY_LINE
 {
-	CHANNEL = "reg_module:dc_pc_r|data_reg[1]";
+	CHANNEL = "reg_module:em_pc_r|data_reg[1]";
 	EXPAND_STATUS = COLLAPSED;
 	RADIX = Hexadecimal;
 	TREE_INDEX = 68;
@@ -5554,7 +5554,7 @@ DISPLAY_LINE
 
 DISPLAY_LINE
 {
-	CHANNEL = "reg_module:dc_pc_r|data_reg[0]";
+	CHANNEL = "reg_module:em_pc_r|data_reg[0]";
 	EXPAND_STATUS = COLLAPSED;
 	RADIX = Hexadecimal;
 	TREE_INDEX = 69;
@@ -5564,7 +5564,7 @@ DISPLAY_LINE
 
 DISPLAY_LINE
 {
-	CHANNEL = "reg_module:dc_instr_r|data_reg";
+	CHANNEL = "reg_module:em_instr_r|data_reg";
 	EXPAND_STATUS = COLLAPSED;
 	RADIX = Binary;
 	TREE_INDEX = 70;
@@ -5574,7 +5574,7 @@ DISPLAY_LINE
 
 DISPLAY_LINE
 {
-	CHANNEL = "reg_module:dc_instr_r|data_reg[15]";
+	CHANNEL = "reg_module:em_instr_r|data_reg[15]";
 	EXPAND_STATUS = COLLAPSED;
 	RADIX = Binary;
 	TREE_INDEX = 71;
@@ -5584,7 +5584,7 @@ DISPLAY_LINE
 
 DISPLAY_LINE
 {
-	CHANNEL = "reg_module:dc_instr_r|data_reg[14]";
+	CHANNEL = "reg_module:em_instr_r|data_reg[14]";
 	EXPAND_STATUS = COLLAPSED;
 	RADIX = Binary;
 	TREE_INDEX = 72;
@@ -5594,7 +5594,7 @@ DISPLAY_LINE
 
 DISPLAY_LINE
 {
-	CHANNEL = "reg_module:dc_instr_r|data_reg[13]";
+	CHANNEL = "reg_module:em_instr_r|data_reg[13]";
 	EXPAND_STATUS = COLLAPSED;
 	RADIX = Binary;
 	TREE_INDEX = 73;
@@ -5604,7 +5604,7 @@ DISPLAY_LINE
 
 DISPLAY_LINE
 {
-	CHANNEL = "reg_module:dc_instr_r|data_reg[12]";
+	CHANNEL = "reg_module:em_instr_r|data_reg[12]";
 	EXPAND_STATUS = COLLAPSED;
 	RADIX = Binary;
 	TREE_INDEX = 74;
@@ -5614,7 +5614,7 @@ DISPLAY_LINE
 
 DISPLAY_LINE
 {
-	CHANNEL = "reg_module:dc_instr_r|data_reg[11]";
+	CHANNEL = "reg_module:em_instr_r|data_reg[11]";
 	EXPAND_STATUS = COLLAPSED;
 	RADIX = Binary;
 	TREE_INDEX = 75;
@@ -5624,7 +5624,7 @@ DISPLAY_LINE
 
 DISPLAY_LINE
 {
-	CHANNEL = "reg_module:dc_instr_r|data_reg[10]";
+	CHANNEL = "reg_module:em_instr_r|data_reg[10]";
 	EXPAND_STATUS = COLLAPSED;
 	RADIX = Binary;
 	TREE_INDEX = 76;
@@ -5634,7 +5634,7 @@ DISPLAY_LINE
 
 DISPLAY_LINE
 {
-	CHANNEL = "reg_module:dc_instr_r|data_reg[9]";
+	CHANNEL = "reg_module:em_instr_r|data_reg[9]";
 	EXPAND_STATUS = COLLAPSED;
 	RADIX = Binary;
 	TREE_INDEX = 77;
@@ -5644,7 +5644,7 @@ DISPLAY_LINE
 
 DISPLAY_LINE
 {
-	CHANNEL = "reg_module:dc_instr_r|data_reg[8]";
+	CHANNEL = "reg_module:em_instr_r|data_reg[8]";
 	EXPAND_STATUS = COLLAPSED;
 	RADIX = Binary;
 	TREE_INDEX = 78;
@@ -5654,7 +5654,7 @@ DISPLAY_LINE
 
 DISPLAY_LINE
 {
-	CHANNEL = "reg_module:dc_instr_r|data_reg[7]";
+	CHANNEL = "reg_module:em_instr_r|data_reg[7]";
 	EXPAND_STATUS = COLLAPSED;
 	RADIX = Binary;
 	TREE_INDEX = 79;
@@ -5664,7 +5664,7 @@ DISPLAY_LINE
 
 DISPLAY_LINE
 {
-	CHANNEL = "reg_module:dc_instr_r|data_reg[6]";
+	CHANNEL = "reg_module:em_instr_r|data_reg[6]";
 	EXPAND_STATUS = COLLAPSED;
 	RADIX = Binary;
 	TREE_INDEX = 80;
@@ -5674,7 +5674,7 @@ DISPLAY_LINE
 
 DISPLAY_LINE
 {
-	CHANNEL = "reg_module:dc_instr_r|data_reg[5]";
+	CHANNEL = "reg_module:em_instr_r|data_reg[5]";
 	EXPAND_STATUS = COLLAPSED;
 	RADIX = Binary;
 	TREE_INDEX = 81;
@@ -5684,7 +5684,7 @@ DISPLAY_LINE
 
 DISPLAY_LINE
 {
-	CHANNEL = "reg_module:dc_instr_r|data_reg[4]";
+	CHANNEL = "reg_module:em_instr_r|data_reg[4]";
 	EXPAND_STATUS = COLLAPSED;
 	RADIX = Binary;
 	TREE_INDEX = 82;
@@ -5694,7 +5694,7 @@ DISPLAY_LINE
 
 DISPLAY_LINE
 {
-	CHANNEL = "reg_module:dc_instr_r|data_reg[3]";
+	CHANNEL = "reg_module:em_instr_r|data_reg[3]";
 	EXPAND_STATUS = COLLAPSED;
 	RADIX = Binary;
 	TREE_INDEX = 83;
@@ -5704,7 +5704,7 @@ DISPLAY_LINE
 
 DISPLAY_LINE
 {
-	CHANNEL = "reg_module:dc_instr_r|data_reg[2]";
+	CHANNEL = "reg_module:em_instr_r|data_reg[2]";
 	EXPAND_STATUS = COLLAPSED;
 	RADIX = Binary;
 	TREE_INDEX = 84;
@@ -5714,7 +5714,7 @@ DISPLAY_LINE
 
 DISPLAY_LINE
 {
-	CHANNEL = "reg_module:dc_instr_r|data_reg[1]";
+	CHANNEL = "reg_module:em_instr_r|data_reg[1]";
 	EXPAND_STATUS = COLLAPSED;
 	RADIX = Binary;
 	TREE_INDEX = 85;
@@ -5724,7 +5724,7 @@ DISPLAY_LINE
 
 DISPLAY_LINE
 {
-	CHANNEL = "reg_module:dc_instr_r|data_reg[0]";
+	CHANNEL = "reg_module:em_instr_r|data_reg[0]";
 	EXPAND_STATUS = COLLAPSED;
 	RADIX = Binary;
 	TREE_INDEX = 86;

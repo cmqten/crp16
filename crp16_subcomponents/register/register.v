@@ -1,6 +1,6 @@
 /**
  * A single register of any size. Positive edge triggered, 
- * active high write.
+ * active high write. Width of 1 bit by default.
  *
  * data  : value to load to register
  * q     : value stored in register
@@ -8,8 +8,8 @@
  * clock : clock source
  * reset : reset value to 0
  */
-module reg_module(data, q, wren, clock, reset);
-    parameter width = 16;
+module register(data, q, wren, clock, reset);
+    parameter width = 1;
     
     input   [(width-1):0]   data;
     output  [(width-1):0]   q;
