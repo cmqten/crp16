@@ -24,29 +24,28 @@ module crp16_datapath (
     // Register view
     input   [2:0]   reg_sel,
     output  [15:0]  reg_view,
-    output  [15:0]  dc_instr_view
+    output  [15:0]  instr_view,
+    output  [15:0]  pc_view
 );
     /*==========================================================================
     Local Parameters, Parametrized Macros
     ==========================================================================*/
     
     // Instruction types
-    `define ALU_I(instr)        (instr[1:0] == 2'b11)
-    
+    `define ALU_I(instr)        (instr[1:0] == 2'b11)   
     `define CALL_I(instr)       (instr[3:0] == 4'b1010)
     `define JUMPC_I(instr)      (instr[2:0] == 3'b110)
     `define JUMPUC_I(instr)     (instr[3:0] == 4'b0010)
     `define BRANCH_I(instr)     (`CALL_I(instr) | `JUMPC_I(instr) | \
-                                 `JUMPUC_I(instr))
-                                 
+                                 `JUMPUC_I(instr))                                
     `define GT_I(instr)         (instr[3:0] == 4'b1100)
     `define LT_I(instr)         (instr[3:0] == 4'b0100)
     `define CMP_I(instr)        (`GT_I(instr) | `LT_I(instr))
-    
     `define LOAD_I(instr)       (instr[5:0] == 6'b000001)
     `define LOADHI_I(instr)     (instr[4:0] == 5'b10001)
     `define LOADIMM_I(instr)    (instr[3:0] == 4'b1001)
     `define STORE_I(instr)      (instr[5:0] == 6'b100001)
+    `define STOP_I(instr)       (instr[15:0] == 16'h8000)
     
     // Encoding
     `define ALUOP(instr)        (instr[4:2])
@@ -86,11 +85,6 @@ module crp16_datapath (
     Data/Control Wires, Pipeline Registers
     ==========================================================================*/
     
-    wire    [1:0]   stage;
-    
-    register #(2)   stage_r(stage + 2'd1, stage, 1'b1, clock, reset);
-    
-    
     // Stage 0 : Instruction Fetch
     wire    [15:0]  if_instr, if_pc;
     wire            if_pc_wren;
@@ -127,6 +121,10 @@ module crp16_datapath (
     wire    [15:0]  em_alu_reg, em_mem_reg;
     wire            em_alu_reg_wren, em_mem_reg_wren;
     
+    wire    [15:0]  em_reg_d_data;
+    wire    [2:0]   em_reg_d_sel;
+    wire            em_reg_wren;
+    
     wire    [15:0]  em_alu_a, em_alu_b, em_alu_out, em_alu_reg_in;
     wire    [15:0]  em_cmp_out, em_imm;
     wire    [2:0]   em_alu_op;
@@ -157,6 +155,9 @@ module crp16_datapath (
     register #(16)  wb_instr_r(em_instr, wb_instr, wb_instr_wren, clock, reset);
     
     register #(16)  wb_pc_r(em_pc, wb_pc, wb_pc_wren, clock, reset);
+    
+    // Other pipeline logic
+    wire    stop = `STOP_I(wb_instr);
     
     
     /*==========================================================================
@@ -196,24 +197,34 @@ module crp16_datapath (
     
     assign if_next_addr = if_mem_addr + 16'd1;
     assign if_mem_addr  = if_pc_src ? if_branch_addr : if_pc;
-    assign if_pc_wren   = stage == IF;
+    assign if_pc_wren   = ~stop;
     
     
     /*==========================================================================
     Decode Stage Logic
     ==========================================================================*/
     
-    assign dc_instr_wren  = stage == IF;
-    assign dc_pc_wren     = stage == IF;
+    assign dc_instr_wren  = ~stop;
+    assign dc_pc_wren     = ~stop;
+    assign dc_reg_ab_wren = ~stop;
+    
     assign dc_rf_a_sel    = `REGA(dc_instr);
     
     assign dc_rf_b_sel    = `JUMPC_I(dc_instr) | `LOADHI_I(dc_instr) |
                             `STORE_I(dc_instr) ? 
                             `REGD(dc_instr) : `REGB(dc_instr);
                            
-    assign dc_reg_a_in    = dc_rf_a_out;
-    assign dc_reg_b_in    = dc_rf_b_out;
-    assign dc_reg_ab_wren = stage == DC;
+    assign dc_reg_a_in    = em_reg_wren & (em_reg_d_sel == dc_rf_a_sel) ?
+                                em_reg_d_data :
+                            wb_reg_wren & (wb_reg_d_sel == dc_rf_a_sel) ?
+                                wb_reg_d_data :
+                            dc_rf_a_out;
+                            
+    assign dc_reg_b_in    = em_reg_wren & (em_reg_d_sel == dc_rf_b_sel) ?
+                                em_reg_d_data :
+                            wb_reg_wren & (wb_reg_d_sel == dc_rf_b_sel) ?
+                                wb_reg_d_data :
+                            dc_rf_b_out;
     
     // Branch address is 0xdead if not a branch instruction for easy error 
     // detection
@@ -231,9 +242,13 @@ module crp16_datapath (
     Execute or Memory Stage Logic
     ==========================================================================*/
     
-    assign em_instr_wren = stage == DC;
-    assign em_pc_wren    = stage == DC;
+    // Pipeline registers
+    assign em_instr_wren   = ~stop;
+    assign em_pc_wren      = ~stop;
+    assign em_alu_reg_wren = ~stop;
+    assign em_mem_reg_wren = ~stop;
     
+    // Operands
     assign em_imm = `LOADIMM_I(em_instr)   ?
                         (`SIGNED(em_instr) ? `SE8(em_instr) : `ZE8(em_instr)) :
                     `ALU_I(em_instr) | `CMP_I(em_instr) ?
@@ -268,19 +283,32 @@ module crp16_datapath (
                            `LOADHI_I(em_instr)  ? em_alu_out :
                            16'hdead;
     
-    assign em_mem_data = dc_reg_b;
     assign em_mem_addr = dc_reg_a;
-    assign em_mem_wren = (stage == EM) & `STORE_I(em_instr);
-    assign em_alu_reg_wren = stage == EM;
-    assign em_mem_reg_wren = stage == EM;
+    assign em_mem_data = dc_reg_b;
+    assign em_mem_wren = ~stop & `STORE_I(em_instr);
+    
+    // Advertising register to be written to for data hazard detection
+    assign em_reg_d_sel  = `CALL_I(em_instr) ? LINK_REG : `REGD(em_instr);
+    
+    assign em_reg_d_data = `CALL_I(em_instr) ? em_pc : 
+                           `LOAD_I(em_instr) ? em_mem_q :
+                           (`ALU_I(em_instr)    | `LOADIMM_I(em_instr) |
+                            `LOADHI_I(em_instr) | `CMP_I(em_instr)) ? 
+                                em_alu_reg_in :
+                           16'hdead;
+    
+    assign em_reg_wren   = ~stop & 
+                           (`ALU_I(em_instr)  | `LOADIMM_I(em_instr) | 
+                            `LOAD_I(em_instr) | `LOADHI_I(em_instr)  | 
+                            `CALL_I(em_instr) | `CMP_I(em_instr));  
     
     
     /*==========================================================================
     Writeback Stage Logic
     ==========================================================================*/
     
-    assign wb_instr_wren = stage == EM;
-    assign wb_pc_wren    = stage == EM;
+    assign wb_instr_wren = ~stop;
+    assign wb_pc_wren    = ~stop;
     
     assign wb_reg_d_sel  = `CALL_I(wb_instr) ? LINK_REG : `REGD(wb_instr);
     
@@ -292,12 +320,13 @@ module crp16_datapath (
                                 em_alu_reg :
                            16'hdead;
     
-    assign wb_reg_wren   = (stage == WB) & 
+    assign wb_reg_wren   = ~stop & 
                            (`ALU_I(wb_instr)  | `LOADIMM_I(wb_instr) | 
                             `LOAD_I(wb_instr) | `LOADHI_I(wb_instr)  | 
-                            `CALL_I(wb_instr) | `CMP_I(wb_instr));             
+                            `CALL_I(wb_instr) | `CMP_I(wb_instr));   
     
-    assign dc_instr_view = dc_instr;
+    assign instr_view = wb_instr;
+    assign pc_view    = wb_pc - 16'd1;
     
 endmodule
 
