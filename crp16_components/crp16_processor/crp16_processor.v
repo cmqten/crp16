@@ -17,24 +17,28 @@ module crp16_processor (
 );
 
     wire    [15:0]  address_a, address_b, data_a, data_b, q_a, q_b;
-    wire            wren_a, wren_b, mem_clock;
+    wire            wren_a, wren_b, mem_clock, reset;
     wire    [15:0]  hex_in, reg_view, instr_view;
+    
+    assign reset = ~KEY[1];
     
     dual_mem memory (
         .clock(~mem_clock), 
-        .address_a(address_a), .address_b(address_b), 
-        .data_a(data_a), .data_b(data_b),
-        .wren_a(wren_a), .wren_b(wren_b),
-        .q_a(q_a), .q_b(q_b)
+        .address_a(address_a),  .address_b(address_b), 
+        .data_a(data_a),        .data_b(data_b),
+        .wren_a(wren_a),        .wren_b(wren_b),
+        .q_a(q_a),              .q_b(q_b)
     );
     
     crp16_datapath datapath (
-        .clock(KEY[0]),
-        .address_a(address_a), .address_b(address_b), 
-        .data_a(data_a), .data_b(data_b),
-        .wren_a(wren_a), .wren_b(wren_b),
-        .q_a(q_a), .q_b(q_b), .mem_clock(mem_clock),
-        .reg_sel(SW[2:0]), .reg_view(reg_view), .dc_instr_view(instr_view)
+        .clock(KEY[0]),             .reset(reset),
+        .address_a(address_a),      .address_b(address_b), 
+        .data_a(data_a),            .data_b(data_b),
+        .wren_a(wren_a),            .wren_b(wren_b),
+        .q_a(q_a),                  .q_b(q_b),       
+        .mem_clock(mem_clock),
+        .reg_sel(SW[2:0]),          .reg_view(reg_view), 
+        .dc_instr_view(instr_view)
     );
     
     hex_decoder addrlo(address_a[3:0], HEX4);
