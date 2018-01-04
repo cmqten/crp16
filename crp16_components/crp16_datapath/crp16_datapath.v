@@ -92,33 +92,29 @@ module crp16_datapath (
     // Stage 1 : Instruction Decode 
     wire    [15:0]  dc_instr, dc_pc;
     wire            dc_instr_wren, dc_pc_wren;
-    wire    [15:0]  dc_reg_a, dc_reg_b;
-    wire            dc_reg_ab_wren;
     
-    wire    [15:0]  dc_reg_a_in, dc_reg_b_in, dc_rf_a_out, dc_rf_b_out;
     wire    [2:0]   dc_rf_a_sel, dc_rf_b_sel;
+    wire    [15:0]  dc_rf_a_out, dc_rf_b_out;
+    wire    [15:0]  dc_reg_a_fwd, dc_reg_b_fwd, dc_imm;
+    wire    [15:0]  dc_em_alu_a_in, dc_em_alu_b_in;
     
     register #(16)  dc_instr_r(if_instr, dc_instr, dc_instr_wren, clock, reset);
     
     register #(16)  dc_pc_r(if_next_addr, dc_pc, dc_pc_wren, clock, reset);
     
-    register #(16)  dc_reg_a_r(dc_reg_a_in, dc_reg_a, dc_reg_ab_wren, clock, 
-                               reset);
-    
-    register #(16)  dc_reg_b_r(dc_reg_b_in, dc_reg_b, dc_reg_ab_wren, clock, 
-                               reset);
-    
     
     // Stage 2 : Execute or Memory 
     wire    [15:0]  em_instr, em_pc;
     wire            em_instr_wren, em_pc_wren;
+    wire    [15:0]  dc_em_alu_a, dc_em_alu_b, dc_em_mem_addr, dc_em_mem_data;
+    wire            dc_em_wren;
     
-    wire    [15:0]  em_alu_a, em_alu_b, em_alu_out, em_alu_reg_in;
-    wire    [15:0]  em_cmp_out, em_imm;
+    wire    [15:0]  em_alu_out, em_alu_cmp_out;
+    wire    [15:0]  em_cmp_out;
     wire    [2:0]   em_alu_op;
     wire            v, c, n, z;
     
-    wire    [15:0]  em_mem_data, em_mem_q, em_mem_addr;
+    wire    [15:0]  em_mem_q;
     wire            em_mem_wren;
     
     wire    [15:0]  em_reg_d_data;
@@ -128,7 +124,19 @@ module crp16_datapath (
     register #(16)  em_instr_r(dc_instr, em_instr, em_instr_wren, clock, reset);
     
     register #(16)  em_pc_r(dc_pc, em_pc, em_pc_wren, clock, reset);
- 
+    
+    register #(16)  dc_em_alu_a_r(dc_em_alu_a_in, dc_em_alu_a, dc_em_wren, 
+                                  clock, reset);
+    
+    register #(16)  dc_em_alu_b_r(dc_em_alu_b_in, dc_em_alu_b, dc_em_wren, 
+                                  clock, reset);
+    
+    register #(16)  dc_em_mem_addr_r(dc_reg_a_fwd, dc_em_mem_addr, dc_em_wren, 
+                                     clock, reset);
+    
+    register #(16)  dc_em_mem_data_r(dc_reg_b_fwd, dc_em_mem_data, dc_em_wren, 
+                                     clock, reset);
+    
     
     // Other pipeline logic
     wire    stop = `STOP_I(em_instr);
@@ -140,7 +148,7 @@ module crp16_datapath (
     
     // ALU 
     crp16_alu alu (
-        .op_a(em_alu_a),    .op_b(em_alu_b), 
+        .op_a(dc_em_alu_a), .op_b(dc_em_alu_b), 
         .op_sel(em_alu_op), .alu_out(em_alu_out),
         .v(v), .c(c), .n(n), .z(z)
     );
@@ -159,8 +167,8 @@ module crp16_datapath (
     assign mem_clock = clock;
     assign address_a = if_mem_addr;
     assign if_instr  = q_a;
-    assign address_b = em_mem_addr;
-    assign data_b    = em_mem_data;
+    assign address_b = dc_em_mem_addr;
+    assign data_b    = dc_em_mem_data;
     assign wren_b    = em_mem_wren;
     assign em_mem_q  = q_b;
   
@@ -180,7 +188,12 @@ module crp16_datapath (
     
     assign dc_instr_wren  = ~stop;
     assign dc_pc_wren     = ~stop;
-    assign dc_reg_ab_wren = ~stop;
+    
+    assign dc_imm = `LOADIMM_I(dc_instr)   ?
+                        (`SIGNED(dc_instr) ? `SE8(dc_instr) : `ZE8(dc_instr)) :
+                    `ALU_I(dc_instr) | `CMP_I(dc_instr) ?
+                        (`SIGNED(dc_instr) ? `SE4(dc_instr) : `ZE4(dc_instr)) :
+                    16'h0;
     
     assign dc_rf_a_sel    = `REGA(dc_instr);
     
@@ -188,22 +201,31 @@ module crp16_datapath (
                             `STORE_I(dc_instr) ? 
                             `REGD(dc_instr) : `REGB(dc_instr);
                            
-    assign dc_reg_a_in    = em_reg_wren & (em_reg_d_sel == dc_rf_a_sel) ?
+    assign dc_reg_a_fwd   = em_reg_wren & (em_reg_d_sel == dc_rf_a_sel) ?
                             em_reg_d_data : dc_rf_a_out;
                             
-    assign dc_reg_b_in    = em_reg_wren & (em_reg_d_sel == dc_rf_b_sel) ?
+    assign dc_reg_b_fwd   = em_reg_wren & (em_reg_d_sel == dc_rf_b_sel) ?
                             em_reg_d_data : dc_rf_b_out;
+              
+    // Operands          
+    assign dc_em_alu_a_in = `LOADHI_I(dc_instr)  ? `HI8(dc_instr) :
+                            `LOADIMM_I(dc_instr) ? 16'b0 : 
+                            dc_reg_a_fwd;
+    
+    assign dc_em_alu_b_in = `LOADHI_I(dc_instr)  ? dc_reg_b_fwd[7:0] :
+                            `LOADIMM_I(dc_instr) | `IMM(dc_instr) ? dc_imm : 
+                            dc_reg_b_fwd;
     
     // Branch address is 0xdead if not a branch instruction for easy error 
     // detection
     assign if_branch_addr = ~`BRANCH_I(dc_instr) ? 16'hdead :
-                            `BRANCHREG(dc_instr) ? dc_reg_a_in :
+                            `BRANCHREG(dc_instr) ? dc_reg_a_fwd :
                             `JUMPC_I(dc_instr)   ? dc_pc + `SE8(dc_instr) :
                             dc_pc + `SE11(dc_instr);
                          
     assign if_pc_src = `CALL_I(dc_instr) | `JUMPUC_I(dc_instr) |
                        (`JUMPC_I(dc_instr) & 
-                       (`BRANCHCOND(dc_instr) == (|dc_reg_b_in)));
+                       (`BRANCHCOND(dc_instr) == (|dc_reg_b_fwd)));
     
     
     /*==========================================================================
@@ -213,21 +235,7 @@ module crp16_datapath (
     // Pipeline registers
     assign em_instr_wren   = ~stop;
     assign em_pc_wren      = ~stop;
-    
-    // Operands
-    assign em_imm = `LOADIMM_I(em_instr)   ?
-                        (`SIGNED(em_instr) ? `SE8(em_instr) : `ZE8(em_instr)) :
-                    `ALU_I(em_instr) | `CMP_I(em_instr) ?
-                        (`SIGNED(em_instr) ? `SE4(em_instr) : `ZE4(em_instr)) :
-                    16'h0;
-               
-    assign em_alu_a = `LOADHI_I(em_instr)  ? `HI8(em_instr) :
-                      `LOADIMM_I(em_instr) ? 16'b0 : 
-                      dc_reg_a;
-    
-    assign em_alu_b = `LOADHI_I(em_instr)  ? dc_reg_b[7:0] :
-                      `LOADIMM_I(em_instr) | `IMM(em_instr) ? em_imm : 
-                      dc_reg_b;
+    assign dc_em_wren      = ~stop;
     
     // - Subtraction for lt/gt to get result from ALU flags
     // - Addition for loadi/loadhi for obvious reasons
@@ -243,15 +251,13 @@ module crp16_datapath (
                              (`SIGNED(em_instr) ? (n ^ v) : ~c) :
                           1'b0)};
     
-    assign em_alu_reg_in = `ALU_I(em_instr)     ? em_alu_out :
-                           `CMP_I(em_instr)     ? em_cmp_out :
-                           `LOADIMM_I(em_instr) ? em_alu_out :
-                           `LOADHI_I(em_instr)  ? em_alu_out :
-                           16'hdead;
+    assign em_alu_cmp_out = `ALU_I(em_instr)     ? em_alu_out :
+                            `CMP_I(em_instr)     ? em_cmp_out :
+                            `LOADIMM_I(em_instr) ? em_alu_out :
+                            `LOADHI_I(em_instr)  ? em_alu_out :
+                            16'hdead;
     
-    assign em_mem_addr = dc_reg_a;
-    assign em_mem_data = dc_reg_b;
-    assign em_mem_wren = ~stop & `STORE_I(em_instr);
+    assign em_mem_wren   = ~stop & `STORE_I(em_instr);
     
     assign em_reg_d_sel  = `CALL_I(em_instr) ? LINK_REG : `REGD(em_instr);
     
@@ -261,7 +267,7 @@ module crp16_datapath (
                            `LOAD_I(em_instr) ? em_mem_q :
                            (`ALU_I(em_instr)    | `LOADIMM_I(em_instr) |
                             `LOADHI_I(em_instr) | `CMP_I(em_instr)) ? 
-                                em_alu_reg_in :
+                                em_alu_cmp_out :
                            16'hdead;
     
     assign em_reg_wren   = ~stop & 
