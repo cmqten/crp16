@@ -1,11 +1,18 @@
+/*******************************************************************************
+ *
+ * CRP16 Processor Implementation
+ *
+ * This module serves as the interface between the DE1-SoC board and the CRP16
+ * datapath. Altera's 2-Port RAM IP is used as the processor's memory. 
+ *
+ ******************************************************************************/
+
 `ifndef CRP16_PROCESSOR
 `define CRP16_PROCESSOR
 
 `include "../crp16_datapath/crp16_datapath.v"
 `include "../../crp16_subcomponents/hex_decoder/hex_decoder.v"
 
-// Clock period / 2
-`define HI_PERIOD 32'd12499999  
 
 module crp16_processor (
     input   [3:0]   KEY,
@@ -19,17 +26,15 @@ module crp16_processor (
     output  [6:0]   HEX4,
     output  [6:0]   HEX5
 );
-
     wire    [15:0]  address_a, address_b, data_a, data_b, q_a, q_b;
     wire            wren_a, wren_b, mem_clock, clock, reset;
     wire    [15:0]  hex_in, counter, reg_view, instr_view, pc_view;
     
     // Clock divider
-    reg             clock_div = 1'b0;
-    reg     [31:0]  clock_counter = `HI_PERIOD;
+    reg     [23:0]  clock_counter = 24'b0;
     
-    assign reset     = ~KEY[1];
-    assign clock     = clock_div;
+    assign reset = ~KEY[1];
+    assign clock = clock_counter[23];
     
     // Dual port memory
     dual_mem memory (
@@ -65,16 +70,10 @@ module crp16_processor (
                     SW[3] ? reg_view : 
                     instr_view;
     
-    // 2 Hz clock
+    // 2.98 Hz clock
     always @(posedge CLOCK_50)
     begin
-        if (clock_counter > 32'd0) clock_counter <= clock_counter - 1;
-        
-        else
-        begin
-            clock_counter <= `HI_PERIOD;
-            clock_div <= clock_div ^ 1'b1;
-        end
+        clock_counter <= clock_counter + 24'd1;
     end
 
 endmodule

@@ -1,3 +1,21 @@
+/*******************************************************************************
+ *
+ * CRP16 Datapath
+ *
+ * This module contains the CRP16's pipeline. Memory is connected through the 
+ * external interface provided. 
+ *
+ * Specifications:
+ * - 16-bit instructions and words
+ * - 8 general purpose registers with register 7 as the link register for 
+ *   subroutine calls
+ * - Harvard architecture
+ * - 3-stage fully-pipelined datapath
+ * - Operand forwarding from Execute/Memory stage to Decode stage
+ * - Early branch resolution at the Decode stage
+ *
+ ******************************************************************************/
+
 `ifndef CRP16_DATAPATH
 `define CRP16_DATAPATH
 
@@ -35,21 +53,17 @@ module crp16_datapath (
     // Instruction types
     `define ALU_I(instr)        (instr[1:0] == 2'b11)   
     `define CALL_I(instr)       (instr[3:0] == 4'b1010)
-    
     `define JUMPC_I(instr)      (instr[2:0] == 3'b110)
     `define JUMPUC_I(instr)     (instr[3:0] == 4'b0010)
     `define BRANCH_I(instr)     (`CALL_I(instr) | `JUMPC_I(instr) | \
-                                 `JUMPUC_I(instr))      
-                                 
+                                 `JUMPUC_I(instr))                               
     `define GT_I(instr)         (instr[3:0] == 4'b1100)
     `define LT_I(instr)         (instr[3:0] == 4'b0100)
     `define CMP_I(instr)        (`GT_I(instr) | `LT_I(instr))
-    
     `define LOAD_I(instr)       (instr[5:0] == 6'b000001)
     `define LOADHI_I(instr)     (instr[4:0] == 5'b10001)
     `define LOADIMM_I(instr)    (instr[3:0] == 4'b1001)
     `define STORE_I(instr)      (instr[5:0] == 6'b100001)
-    
     `define STOP_I(instr)       (instr[15:0] == 16'h8000)
     
     // Encoding
@@ -87,19 +101,15 @@ module crp16_datapath (
     // Datapath status
     wire            stop;
     
-  
     // Stage 0 : Instruction Fetch
     wire    [15:0]  if_pc;
-    
     wire    [15:0]  if_branch_addr, if_mem_addr, if_next_addr;
     wire            if_pc_src;
     
     register #(16)  if_pc_r(if_next_addr, if_pc, ~stop, clock, reset);
     
-    
     // Stage 1 : Instruction Decode 
     wire    [15:0]  dc_instr, dc_pc;
-    
     wire    [2:0]   dc_rf_a_sel, dc_rf_b_sel;
     wire    [15:0]  dc_rf_a_out, dc_rf_b_out;
     wire    [15:0]  dc_reg_a_fwd, dc_reg_b_fwd, dc_imm;
@@ -108,17 +118,13 @@ module crp16_datapath (
     
     register #(16)  dc_pc_r(if_next_addr, dc_pc, ~stop, clock, reset);
     
-    
     // Stage 2 : Execute or Memory 
     wire    [15:0]  em_instr, em_pc;
     wire    [15:0]  dc_em_alu_a, dc_em_alu_b, dc_em_mem_addr, dc_em_mem_data;
-    
     wire    [15:0]  em_alu_out, em_cmp_out;
     wire    [2:0]   em_alu_op;
     wire            v, c, n, z;
-    
     wire    [15:0]  dc_em_mem_q;
-    
     wire    [15:0]  em_reg_d_data;
     wire    [2:0]   em_reg_d_sel;
     wire            em_reg_wren;
@@ -133,7 +139,6 @@ module crp16_datapath (
     register #(16)  dc_em_alu_b_r(dc_em_alu_b_in, dc_em_alu_b, ~stop, 
                                   clock, reset);
   
-    
     // Datapath status logic
     assign stop = `STOP_I(em_instr);
     assign instr_view = em_instr;
@@ -179,7 +184,6 @@ module crp16_datapath (
     
     assign if_next_addr = if_mem_addr + 16'd1;
     assign if_mem_addr  = if_pc_src ? if_branch_addr : if_pc;
-    
     
     /*==========================================================================
     Decode Stage Logic
@@ -227,7 +231,6 @@ module crp16_datapath (
     assign if_pc_src = `CALL_I(dc_instr) | `JUMPUC_I(dc_instr) |
                        (`JUMPC_I(dc_instr) & 
                        (`BRANCHCOND(dc_instr) == (|dc_reg_b_fwd)));
-    
     
     /*==========================================================================
     Execute or Memory Stage Logic
