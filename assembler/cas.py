@@ -49,12 +49,12 @@ INSTR_PARSER = {
     "ldhi" : lambda x, y: parse_load_imm_statement(x, y),
     "ldi"  : lambda x, y: parse_load_imm_statement(x, y),
     "ldsi" : lambda x, y: parse_load_imm_statement(x, y),
-    "ldw"  : None,  
+    "ldw"  : lambda x, y: parse_load_store_statement(x, y),  
     "lt"   : lambda x, y: parse_alu_statement(x, y),
     "lts"  : lambda x, y: parse_alu_statement(x, y),
     "nop"  : None,
     "or"   : lambda x, y: parse_alu_statement(x, y),
-    "stw"  : None,
+    "stw"  : lambda x, y: parse_load_store_statement(x, y),
     "sll"  : lambda x, y: parse_alu_statement(x, y),
     "sra"  : lambda x, y: parse_alu_statement(x, y),
     "srl"  : lambda x, y: parse_alu_statement(x, y),
@@ -94,7 +94,7 @@ def parse_alu_statement(instr: str, args: str) -> int:
     '''
     Parses instructions that use the ALU: add, and, gt, gts, lt, lts, or, sll,
     sra, srl, sub, xor. Returns the integer representation of the machine code
-    if the arguments are valid, None otherwise.
+    if the statement is valid, None otherwise.
     '''
     args_match_result = ARGS3_REGEX.match(args)
 
@@ -109,16 +109,16 @@ def parse_alu_statement(instr: str, args: str) -> int:
     opcode = INSTRUCTIONS[instr]
 
     if dest not in REGISTERS:
-        print("Error: first argument must be a valid register", end="")
+        print("Error: first argument must be a register", end="")
         return None
-
-    dest = REGISTERS[dest]  # Integer equivalent of the register number
 
     if op_a not in REGISTERS:
-        print("Error: second argument must be a valid register", end="")
+        print("Error: second argument must be a register", end="")
         return None
 
-    op_a = REGISTERS[op_a]  # Integer equivalent of the register number
+    # Integer representation of the register numbers
+    dest = REGISTERS[dest]  
+    op_a = REGISTERS[op_a]  
 
     # If the third argument is a register, it occupies the highest three bits
     # of the four bits reserved for the third argument
@@ -141,7 +141,8 @@ def parse_alu_statement(instr: str, args: str) -> int:
 
 def parse_load_imm_statement(instr: str, args: str) -> int:
     '''
-    Parses ldi, ldsi, ldhi instructions.
+    Parses ldi, ldsi, ldhi instructions and returns the integer representation
+    of the machine code if the statement is valid, None otherwise.
     '''
     args_match_result = ARGS2_REGEX.match(args)
 
@@ -154,10 +155,10 @@ def parse_load_imm_statement(instr: str, args: str) -> int:
     immop = args_match_result.group(2)
     
     if dest not in REGISTERS:
-        print("Error: first argument must be a valid register", end="")
+        print("Error: first argument must be a register", end="")
         return None
 
-    dest = REGISTERS[dest]  # Integer equivalent of the register number
+    dest = REGISTERS[dest]  # Integer representation of the register number
 
     # Second argument is an integer literal
     immop = parse_int_literal(immop)
@@ -169,6 +170,35 @@ def parse_load_imm_statement(instr: str, args: str) -> int:
     immop &= 255 # Only 8 bits of immediate
 
     return opcode | immop << 5 | dest << 13
+
+
+def parse_load_store_statement(instr: str, args: str) -> int:
+    '''
+    Parses ldw and stw, and returns the integer representation of the machine
+    code if the statement is valid, None otherwise.
+    '''
+    args_match_result = ARGS2_REGEX.match(args)
+
+    if not args_match_result:
+        print("Error: invalid arguments", end="")
+        return None
+
+    opcode = INSTRUCTIONS[instr]
+    data = args_match_result.group(1)
+    address = args_match_result.group(2)
+
+    if data not in REGISTERS:
+        print("Error: first argument must be a register", end="")
+        return None
+
+    if address not in REGISTERS:
+        print("Error: second argument must be a register", end="")
+        return None
+
+    data = REGISTERS[data]
+    address = REGISTERS[address]
+
+    return opcode | data << 13 | address << 10
 
 
 def get_label(line: str) -> List[str]:
@@ -224,11 +254,3 @@ def remove_comment(line: str) -> str:
     match_result = COMMENT_REGEX.match(line)
     
     return match_result.group(1).strip() if match_result else line.strip()
-
-
-
-
-        
-
-    
-    
