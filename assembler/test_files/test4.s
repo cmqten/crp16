@@ -13,10 +13,9 @@
         or      r1, r1, 1   ; set r1 to 1
         xor     r1, r1, -1  
         ldhi    r1, 0       ; prepare r1 for use in OR
-loop:   
-        add     r3, r0, 0   ; copy r0 to r3
+loop:   add     r3, r0, 0   ; copy r0 to r3
         xor     r3, r3, -1
-          
+        
         ldhi    r3, 0       ; invert lower byte of r3
         and     r3, r3, r1
         xor     r3, r3, -1
@@ -27,8 +26,9 @@ loop:
         jez     r3, loop    ; loop while subtraction results in 0
         ldi     r2, 31      
         stw     r1, r2
+        
         ldw     r2, r2
-        nop
-        nop
-        nop
+        noop
+        noop
+        noop
         stop

@@ -1,13 +1,47 @@
-from typing import List, TextIO
+#!/bin/python3
+
+from typing import List, TextIO, Tuple
 import re, sys
+
+
+class ParseException(Exception):
+    pass
+
+
+class SourceLine:
+    '''
+    A class that represent a single line in the source file
+    '''
+    def __init__(self, line: str, num: int):
+        self.line = line
+        self.num = num
+
+    def __str__(self):
+        return self.num + ":    " + self.line
+
+
+class ASMStatement:
+    '''
+    A class that represents a single assembly statement
+    '''
+    def __init__(self, statement: str, source_line: SourceLine, pc: int = None):
+        self.statement = statement
+        self.source_line = source_line
+        self.pc = pc
+
+    def __str__(self):
+        return (str(self.pc) if self.pc is not None else "x") + ":    " + \
+               self.statement
+
 
 ARGS2_REGEX = re.compile("^\s*([a-zA-Z0-9_-]+)\s*,\s*([a-zA-Z0-9_-]+)\s*$")
 ARGS3_REGEX = re.compile(
     "^\s*([a-zA-Z0-9_-]+)\s*,\s*([a-zA-Z0-9_-]+)\s*,\s*([a-zA-Z0-9_-]+)\s*$")
-COMMENT_REGEX = re.compile("^\s*(.*);(.*)$")
+COMMENT_REGEX = re.compile("^(.*);(.*)$")
 INSTR_REGEX = re.compile("^\s*([a-zA-Z0-9_-]+)\s+(.*)$")
 LABEL_REGEX = re.compile("^\s*([a-zA-Z0-9_-]+)\s*:(.*)$")
-NOP_STOP_REGEX = re.compile("^\s*(nop|stop)\s*$")
+NOP_STOP_REGEX = re.compile("^\s*(noop|stop)\s*$")
+
 
 INSTRUCTIONS = {
     "add"  : 0b00011,   
@@ -24,7 +58,7 @@ INSTRUCTIONS = {
     "ldw"  : 0b1000001, # load word from memory    
     "lt"   : 0b00100,   # less than unsigned
     "lts"  : 0b10100,   # less than signed
-    "nop"  : 0,         # no operation
+    "noop" : 0,         # no operation
     "or"   : 0b11011, 
     "stw"  : 0b1100001, # store word to memory
     "sll"  : 0b10011,   # shift left logically
@@ -35,45 +69,39 @@ INSTRUCTIONS = {
     "xor"  : 0b11111
 }
 
+
 REGISTERS = {"r0": 0, "r1": 1, "r2": 2, "r3": 3, "r4": 4, "r5": 5, "r6": 6,
              "r7": 7, "sp": 6, "lr": 7}
+             
 
 INSTR_PARSER = {
-    "add"  : lambda x, y, z: parse_alu_statement(x, y, z),   
-    "and"  : lambda x, y, z: parse_alu_statement(x, y, z),
+    "add"  : lambda x, y, z: parse_alu_statement(x, y),   
+    "and"  : lambda x, y, z: parse_alu_statement(x, y),
     "call" : lambda x, y, z: parse_unconditional_jump_statement(x, y, z),
-    "gt"   : lambda x, y, z: parse_alu_statement(x, y, z),
-    "gts"  : lambda x, y, z: parse_alu_statement(x, y, z),
+    "gt"   : lambda x, y, z: parse_alu_statement(x, y),
+    "gts"  : lambda x, y, z: parse_alu_statement(x, y),
     "jez"  : lambda x, y, z: parse_conditional_jump_statement(x, y, z),
     "jmp"  : lambda x, y, z: parse_unconditional_jump_statement(x, y, z),
     "jnz"  : lambda x, y, z: parse_conditional_jump_statement(x, y, z),
-    "ldhi" : lambda x, y, z: parse_load_imm_statement(x, y, z),
-    "ldi"  : lambda x, y, z: parse_load_imm_statement(x, y, z),
-    "ldsi" : lambda x, y, z: parse_load_imm_statement(x, y, z),
-    "ldw"  : lambda x, y, z: parse_load_store_statement(x, y, z),  
-    "lt"   : lambda x, y, z: parse_alu_statement(x, y, z),
-    "lts"  : lambda x, y, z: parse_alu_statement(x, y, z),
+    "ldhi" : lambda x, y, z: parse_load_imm_statement(x, y),
+    "ldi"  : lambda x, y, z: parse_load_imm_statement(x, y),
+    "ldsi" : lambda x, y, z: parse_load_imm_statement(x, y),
+    "ldw"  : lambda x, y, z: parse_load_store_statement(x, y),  
+    "lt"   : lambda x, y, z: parse_alu_statement(x, y),
+    "lts"  : lambda x, y, z: parse_alu_statement(x, y),
     "nop"  : None,
-    "or"   : lambda x, y, z: parse_alu_statement(x, y, z),
-    "stw"  : lambda x, y, z: parse_load_store_statement(x, y, z),
-    "sll"  : lambda x, y, z: parse_alu_statement(x, y, z),
-    "sra"  : lambda x, y, z: parse_alu_statement(x, y, z),
-    "srl"  : lambda x, y, z: parse_alu_statement(x, y, z),
+    "or"   : lambda x, y, z: parse_alu_statement(x, y),
+    "stw"  : lambda x, y, z: parse_load_store_statement(x, y),
+    "sll"  : lambda x, y, z: parse_alu_statement(x, y),
+    "sra"  : lambda x, y, z: parse_alu_statement(x, y),
+    "srl"  : lambda x, y, z: parse_alu_statement(x, y),
     "stop" : None,
-    "sub"  : lambda x, y, z: parse_alu_statement(x, y, z),
-    "xor"  : lambda x, y, z: parse_alu_statement(x, y, z)
+    "sub"  : lambda x, y, z: parse_alu_statement(x, y),
+    "xor"  : lambda x, y, z: parse_alu_statement(x, y)
 }
 
+
 LABELS = {}
-
-
-def print_int_bin(num: int, n: int) -> None:
-    '''
-    Prints a number as an n-bit binary string.
-    '''
-    for i in range(n-1, 0, -1):
-        print((num >> i) & 1, end="")
-    print(num & 1)
 
 
 def parse_int_literal(literal_str: str) -> int:
@@ -92,237 +120,216 @@ def parse_int_literal(literal_str: str) -> int:
     except:
         return None
 
+
+def print_int_bin(num: int, n: int) -> None:
+    '''
+    Prints a number as an n-bit binary string.
+    '''
+    for i in range(n-1, 0, -1):
+        print((num >> i) & 1, end="")
+    print(num & 1)
+
+
+def print_int_hex(num: int, n: int) -> None:
+    '''
+    Prints a number as an n-digit hex string.
+    '''
+    hex_dict = {10: "a", 11: "b", 12: "c", 13: "d", 14: "e", 15: "f"}
+    shift = 4 * (n - 1)
+    for i in range(n-1):
+        hex_num = (num >> shift) & 15
+        hex_num = str(hex_num) if hex_num < 10 else hex_dict[hex_num]
+        print(hex_num, end="")
+        shift -= 4
+
+    hex_num = num & 15
+    hex_num = str(hex_num) if hex_num < 10 else hex_dict[hex_num]
+    print(hex_num)
+
     
-def parse_alu_statement(instr: str, args: str, pc: int) -> int:
+def parse_alu_statement(instr: str, args: str) -> int:
     '''
     Parses instructions that use the ALU: add, and, gt, gts, lt, lts, or, sll,
-    sra, srl, sub, xor. Returns the integer representation of the machine code
-    if the statement is valid, None otherwise.
+    sra, srl, sub, xor. Returns the integer representation of the machine code of
+    the statement.
     '''
     args_match_result = ARGS3_REGEX.match(args)
 
     if not args_match_result:
-        print("Error: invalid arguments", end="")
-        return None
+        raise ParseException("invalid arguments", end="")
 
     dest = args_match_result.group(1)
     op_a = args_match_result.group(2)
-    op_b = args_match_result.group(3)
-    imm = 0  
+    op_b = args_match_result.group(3) 
     opcode = INSTRUCTIONS[instr]
 
     if dest not in REGISTERS:
-        print("Error: first argument must be a register", end="")
-        return None
+        raise ParseException("first argument must be a register")
 
     if op_a not in REGISTERS:
-        print("Error: second argument must be a register", end="")
-        return None
+        raise ParseException("second argument must be a register")
 
     # Integer representation of the register numbers
     dest = REGISTERS[dest]  
     op_a = REGISTERS[op_a]  
 
-    # If the third argument is a register, it occupies the highest three bits
-    # of the four bits reserved for the third argument
-    if op_b in REGISTERS: op_b = REGISTERS[op_b] << 1
+    if op_b in REGISTERS: # Register third argument
+        return opcode | dest << 13 | op_a << 10 | REGISTERS[op_b] << 7
 
-    # Integer literal third argument
-    else:
-        imm = 1
-        op_b = parse_int_literal(op_b)
+    op_b = parse_int_literal(op_b) # Integer literal third argument
 
-        if op_b is None:
-            print("Error: third argument must be a register", end="")
-            print(" or an integer literal", end="")
-            return None
+    if op_b is None:
+        raise ParseException(
+            "third argument must be a register or an integer literal")
 
-        op_b &= 15 # Only 4 bits of immediate
-
-    return opcode | imm << 5 | dest << 13 | op_a << 10 | op_b << 6
+    # 1 << 5 is for specifying that the third argument is an immediate
+    # & 15 masks 4 bits of the immediate
+    # & 65535 masks the lowest 16 bits of the instruction
+    return (opcode | 1 << 5 | dest << 13 | op_a << 10 | (op_b & 15) << 6) & 65535
 
 
-def parse_load_imm_statement(instr: str, args: str, pc: int) -> int:
+def parse_load_imm_statement(instr: str, args: str) -> int:
     '''
     Parses ldi, ldsi, ldhi and returns the integer representation of the machine
-    code if the statement is valid, None otherwise.
+    code of the statement.
     '''
     args_match_result = ARGS2_REGEX.match(args)
 
     if not args_match_result:
-        print("Error: invalid arguments", end="")
-        return None
+        raise ParseException("invalid arguments")
 
     opcode = INSTRUCTIONS[instr]
     dest = args_match_result.group(1)
     immop = args_match_result.group(2)
     
     if dest not in REGISTERS:
-        print("Error: first argument must be a register", end="")
-        return None
+        raise ParseException("first argument must be a register")
 
-    dest = REGISTERS[dest]  # Integer representation of the register number
-
-    # Second argument is an integer literal
+    dest = REGISTERS[dest]
     immop = parse_int_literal(immop)
 
     if immop is None:
-        print("Error: second argument must be an integer literal", end="")
-        return None
+        raise ParseException("second argument must be an integer literal")
 
-    immop &= 255 # Only 8 bits of immediate
+    # & 255 only 8 bits of immediate
+    # & 65535 masks the lowest 16 bits of the instruction
+    return (opcode | (immop & 255) << 5 | dest << 13) & 65535
 
-    return opcode | immop << 5 | dest << 13
 
-
-def parse_load_store_statement(instr: str, args: str, pc: int) -> int:
+def parse_load_store_statement(instr: str, args: str) -> int:
     '''
     Parses ldw and stw, and returns the integer representation of the machine
-    code if the statement is valid, None otherwise.
+    code of the statement.
     '''
     args_match_result = ARGS2_REGEX.match(args)
 
     if not args_match_result:
-        print("Error: invalid arguments", end="")
-        return None
+        raise ParseException("invalid arguments")
 
     opcode = INSTRUCTIONS[instr]
     data = args_match_result.group(1)
     address = args_match_result.group(2)
 
     if data not in REGISTERS:
-        print("Error: first argument must be a register", end="")
-        return None
+        raise ParseException("first argument must be a register")
 
     if address not in REGISTERS:
-        print("Error: second argument must be a register", end="")
-        return None
+        raise ParseException("second argument must be a register")
 
     data = REGISTERS[data]
     address = REGISTERS[address]
 
-    return opcode | data << 13 | address << 10
-
-
-def parse_unconditional_jump_statement(instr: str, args: str, pc: int) -> int:
-    '''
-    Parses call and jmp, and returns the integer representation of the machine
-    code if the statement is valid, None otherwise.
-    '''
-    opcode = INSTRUCTIONS[instr]
-    imm = 0
-    offset = 0
-
-    if args in REGISTERS:
-        return opcode | imm << 4 | REGISTERS[args] << 10
-
-    # Jumping to a label or specifying an offset uses the jump/call immediate
-    # instruction
-    imm = 1
-
-    if args in LABELS: # Jumping to label
-        offset = LABELS[args] - (pc + 1)
-
-    else: # Immediate offset
-        offset = parse_int_literal(args)
-
-        if offset is None:
-            print("Error: argument must be a register, a label,", end="")
-            print(" or an integer literal", end="")
-            return None
-
-        # When branching, pc + 1 is the address being added to the offset instead
-        # of pc. Subtracting -1 from the offset gives the programmer the illusion
-        # that pc is being added to the offset, to make it more intuitive.
-        offset -= 1
-
-    if offset > 1023 or offset < -1024: # 11-bit offset range
-        print("Error: call/jump out of range", end="")
-        return None
-
-    return opcode | imm << 4 | offset << 5
+    # & 65535 masks the lowest 16 bits
+    return (opcode | data << 13 | address << 10) & 65535
 
 
 def parse_conditional_jump_statement(instr: str, args: str, pc: int) -> int:
     '''
     Parses jez and jnz, and returns the integer representation of the machine
-    code if the statement is valid, None otherwise.
+    code of the statement.
     '''
     args_match_result = ARGS2_REGEX.match(args)
 
     if not args_match_result:
-        print("Error: invalid arguments", end="")
-        return None
+        raise ParseException("invalid arguments")
 
     opcode = INSTRUCTIONS[instr]
-    imm = 0
     cond = args_match_result.group(1)
     offset = args_match_result.group(2)
 
     if cond not in REGISTERS:
-        print("Error: first argument must be a register", end="")
-        return None
-
-    cond = REGISTERS[cond]
+        raise ParseException("first argument must be a register")
 
     if offset in REGISTERS:
-        return opcode | cond << 13 | REGISTERS[offset] << 10 | imm << 4
+        return opcode | cond << 13 | REGISTERS[offset] << 10 
 
-    imm = 1 # Jumping to label or offset uses immediate
+    if offset not in LABELS: 
+        raise ParseException("second argument must be a register or a label")
 
-    if offset in LABELS: # Jumping to label
-        offset = LABELS[offset] - (pc + 1)
-
-    else: # Immediate offset
-        offset = parse_int_literal(offset)
-
-        if offset is None:
-            print("Error: second argument must be a register, a label,", end="")
-            print(" or an integer literal", end="")
-            return None
-
-        # When branching, pc + 1 is the address being added to the offset instead
-        # of pc. Subtracting -1 from the offset gives the programmer the illusion
-        # that pc is being added to the offset, to make it more intuitive.
-        offset -= 1
+    cond = REGISTERS[cond]
+    offset = LABELS[offset] - (pc + 1)
 
     if offset > 127 or offset < -128: # 8-bit offset range
-        print("Error: jump out of range", end="")
-        return None
+        raise ParseException("jump out of range")
 
-    return opcode | imm << 4 | (offset & 255) << 5 | cond << 13
+    # 1 << 4 specifies that an offset is used instead of a register
+    # & 65535 masks the lowest 16 bits
+    return (opcode | 1 << 4 | (offset & 255) << 5 | cond << 13) & 65535
+
+
+def parse_unconditional_jump_statement(instr: str, args: str, pc: int) -> int:
+    '''
+    Parses call and jmp, and returns the integer representation of the machine
+    code of the statement.
+    '''
+    opcode = INSTRUCTIONS[instr]
+    offset = 0
+
+    if args in REGISTERS:
+        return opcode | REGISTERS[args] << 10
+
+    if args not in LABELS: 
+        raise ParseException("argument must be a register or a label")
+
+    offset = LABELS[args] - (pc + 1)
+
+    if offset > 1023 or offset < -1024: # 11-bit offset range
+        raise ParseException("call/jump out of range")
+    
+    # 1 << 4 specifies that an offset is used instead of a register
+    # & 65535 masks the lowest 16 bits
+    return (opcode | 1 << 4 | offset << 5) & 65535
     
 
-def get_label(line: str) -> List[str]:
+def get_label(line: str) -> Tuple[str]:
     '''
-    Separates the label from statement, if there is one, and returns a list
-    that contains both. If there is an error, this function returns None.
+    Separates the label from statement, if there is one, and returns a tuple
+    that contains both.
     '''
     match_result = LABEL_REGEX.match(line)
 
     if not match_result:
-        return [None, line.strip()]
+        return None, line.strip()
 
     label = match_result.group(1)
 
     if label in INSTRUCTIONS or label in REGISTERS:
-        print("Error: cannot use reserved keyword \'{}\' as label".format(label),
-              end="")
-        return None
+        raise ParseException(
+            "cannot use reserved keyword \'{}\' as label".format(label))
 
-    return [label, match_result.group(2).strip()]
+    return label, match_result.group(2).strip()
 
 
 def parse_statement(statement: str, pc: int) -> int:
     '''
     Parses a statement and returns the integer representation of the machine
-    code encoding if the statement is valid, None otherwise.
+    code of the statement.
     '''
     instr_match_result = INSTR_REGEX.match(statement)
-    nop_stop_match_result = NOP_STOP_REGEX.match(statement)
+    noop_stop_match_result = NOP_STOP_REGEX.match(statement)
 
-    if nop_stop_match_result:
-        return INSTRUCTIONS[nop_stop_match_result.group(1)]
+    if noop_stop_match_result:
+        return INSTRUCTIONS[noop_stop_match_result.group(1)]
 
     elif instr_match_result:
         instr = instr_match_result.group(1)
@@ -331,12 +338,10 @@ def parse_statement(statement: str, pc: int) -> int:
         if instr in INSTRUCTIONS:
             return INSTR_PARSER[instr_match_result.group(1)](instr, args, pc)
         
-        print("Error: invalid instruction \'{}\'".format(
-            instr_match_result.group(1)), end="")
-        return None
-
-    print("Error: malformed statement", end="")
-    return None
+        raise ParseException("invalid instruction \'{}\'".format(
+            instr_match_result.group(1)))
+    
+    raise ParseException("malformed statement")
 
 
 def remove_comment(line: str) -> str:
@@ -348,83 +353,106 @@ def remove_comment(line: str) -> str:
     return match_result.group(1).strip() if match_result else line.strip()
 
 
-def collect_all_labels(file: TextIO) -> List[str]:
+def collect_lines(file: TextIO) -> List[SourceLine]:
     '''
-    First pass collects all the labels and puts all the statements into a list
-    for the second pass. Returns this list if successful, None otherwise.
+    Puts every line that's not a comment or whitespace in the file into a
+    SourceLine instance, and returns a list of all SourceLine instances from the
+    file.
     '''
     line_num = 0
-    pc = 0
-    statements = []
+    source_lines_lst = []
 
     for line in file:
         line_num += 1
+        line_strip = line.strip()
+        if not line_strip or line_strip.startswith(";"):
+            continue
+        source_lines_lst.append(SourceLine(line, line_num))
 
-        no_comment = remove_comment(line)
-        
-        if not no_comment: continue # Line is just a comment
+    return source_lines_lst
 
-        label_statement = get_label(no_comment)
 
-        if label_statement is None:
-            # Prints out the line where the error occurs
-            print(" at line {}".format(line_num))
-            print("    {}".format(line))
-            return None
-
-        if label_statement[0] is not None:
-            if label_statement[0] in LABELS:
-                print("Error: duplicate label at line {}".format(line_num))
-                print("    {}".format(line))
-                return None
-
-            LABELS[label_statement[0]] = pc
-
-        if label_statement[1]:
-            # PC is only incremented for every instruction statement
-            pc += 1
-
-            statements.append([label_statement[1], line, line_num])
-
-    return statements
-            
-
-def assemble(statements: List[str]) -> List[int]:
+def remove_all_comments(lines: List[SourceLine]) -> List[ASMStatement]:
     '''
-    Converts all assembly statements gathered from the file into a list of
-    machine code. Returns the list if successful, None otherwise.
+    Creates a list of ASMStatement in which every trailing comment is
+    removed, and only the assembly statement is left.
     '''
-    machine_code_lst = []
+    statements_lst = []
     pc = 0
-    
+
+    for line in lines:
+        statements_lst.append(ASMStatement(remove_comment(line.line), line))
+
+    return statements_lst
+
+
+def collect_labels(statements: List[ASMStatement]) -> List[ASMStatement]:
+    '''
+    Apply an address to every ASMStatement, collect and remove labels, then
+    return a list of ASMStatement without the labels.
+    '''
+    new_statements = []
+    pc = 0
+
     for statement in statements:
-        machine_code = parse_statement(statement[0], pc)
+        try:
+            label, instr_statement = get_label(statement.statement)
 
-        if machine_code is None:
-            # Prints out the line where the error occurs
-            print(" at line {}".format(statement[2]))
-            print("    {}".format(statement[1]))
-            return None
+            if label is not None:
+                if label in LABELS:
+                    raise ParseException("duplicate labels")
+                
+                LABELS[label] = pc
 
-        machine_code_lst.append(machine_code & 65535)
+            # The only other case is if the label is by itself, do not add it to
+            # the list of ASMStatement and do not increment pc
+            if instr_statement:
+                statement.statement = instr_statement
+                statement.pc = pc
+                new_statements.append(statement)
+                pc += 1
+            
+        except ParseException as p:
+            print("Error at line {}: {}".format(statement.source_line.num,
+                                                str(p)))
+            print("    {}".format(statement.source_line.line))
+            sys.exit(1)
 
-        pc += 1
+    return new_statements
 
-    return machine_code_lst
+
+def parse_all_statements(statements: List[ASMStatement]) -> List[int]:
+    '''
+    Parses all instruction statements and returns a list of integer
+    representations of the machine code.
+    '''
+    machine_code = []
+
+    for statement in statements:
+        try:
+            machine_code.append(parse_statement(statement.statement,
+                                                statement.pc))
+            
+        except ParseException as p:
+            print("Error at line {}: {}".format(statement.source_line.num,
+                                                str(p)))
+            print("    {}".format(statement.source_line.line))
+            sys.exit(1)
+
+    return machine_code
 
 
 if __name__ == "__main__":
-    file = open("test4.s")
-    statements_lst = collect_all_labels(file)
-    if statements_lst is None: sys.exit(1)
-
-    machine_code_lst = assemble(statements_lst)
-    if machine_code_lst is None: sys.exit(1)
-
-    for machine_code in machine_code_lst:
-        print_int_bin(machine_code, 16)
-
-    
+    if len(sys.argv) != 2:
+        print("Usage: cas.py SOURCE")
+        sys.exit(1)
+        
+    file = open(sys.argv[1])
+    lst = parse_all_statements(collect_labels(remove_all_comments(
+            collect_lines(file))))
+    print(LABELS)
+    for mc in lst:
+        print_int_hex(mc, 4)
 
 
         
