@@ -60,7 +60,7 @@ module crp16_processor (
     
     // 7 segment viewer
     hex_decoder addrlo(pc_view[3:0], HEX4);
-    hex_decoder addrhi(pc_view[4], HEX5);
+    hex_decoder addrhi(pc_view[7:4], HEX5);
     hex_decoder h0(hex_in[3:0], HEX0);
     hex_decoder h1(hex_in[7:4], HEX1);
     hex_decoder h2(hex_in[11:8], HEX2);

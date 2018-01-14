@@ -1,7 +1,7 @@
 #!/bin/python3
 
 from typing import List, TextIO, Tuple
-import re, sys
+import os, re, sys
 
 
 class ParseException(Exception):
@@ -32,14 +32,15 @@ class ASMStatement:
     def __str__(self):
         return (str(self.pc) if self.pc is not None else "x") + ":    " + \
                self.statement
+               
 
-
-ARGS2_REGEX = re.compile("^\s*([a-zA-Z0-9_-]+)\s*,\s*([a-zA-Z0-9_-]+)\s*$")
+ASMSRC_REGEX = re.compile("([a-zA-Z0-9_\-\.]+)\.s$")
+ARGS2_REGEX = re.compile("^\s*([a-zA-Z0-9_\-]+)\s*,\s*([a-zA-Z0-9_\-]+)\s*$")
 ARGS3_REGEX = re.compile(
-    "^\s*([a-zA-Z0-9_-]+)\s*,\s*([a-zA-Z0-9_-]+)\s*,\s*([a-zA-Z0-9_-]+)\s*$")
+    "^\s*([a-zA-Z0-9_\-]+)\s*,\s*([a-zA-Z0-9_\-]+)\s*,\s*([a-zA-Z0-9_\-]+)\s*$")
 COMMENT_REGEX = re.compile("^(.*);(.*)$")
-INSTR_REGEX = re.compile("^\s*([a-zA-Z0-9_-]+)\s+(.*)$")
-LABEL_REGEX = re.compile("^\s*([a-zA-Z0-9_-]+)\s*:(.*)$")
+INSTR_REGEX = re.compile("^\s*([a-zA-Z0-9_\-]+)\s+(.*)$")
+LABEL_REGEX = re.compile("^\s*([a-zA-Z0-9_\-]+)\s*:(.*)$")
 NOP_STOP_REGEX = re.compile("^\s*(noop|stop)\s*$")
 
 
@@ -89,13 +90,13 @@ INSTR_PARSER = {
     "ldw"  : lambda x, y, z: parse_load_store_statement(x, y),  
     "lt"   : lambda x, y, z: parse_alu_statement(x, y),
     "lts"  : lambda x, y, z: parse_alu_statement(x, y),
-    "nop"  : None,
+    "noop" : lambda x, y, z: INSTRUCTIONS["noop"],
     "or"   : lambda x, y, z: parse_alu_statement(x, y),
     "stw"  : lambda x, y, z: parse_load_store_statement(x, y),
     "sll"  : lambda x, y, z: parse_alu_statement(x, y),
     "sra"  : lambda x, y, z: parse_alu_statement(x, y),
     "srl"  : lambda x, y, z: parse_alu_statement(x, y),
-    "stop" : None,
+    "stop" : lambda x, y, z: INSTRUCTIONS["stop"],
     "sub"  : lambda x, y, z: parse_alu_statement(x, y),
     "xor"  : lambda x, y, z: parse_alu_statement(x, y)
 }
@@ -121,30 +122,31 @@ def parse_int_literal(literal_str: str) -> int:
         return None
 
 
-def print_int_bin(num: int, n: int) -> None:
+def int_bin(num: int, n: int) -> str:
     '''
-    Prints a number as an n-bit binary string.
+    Returns a number as an n-bit binary string.
     '''
-    for i in range(n-1, 0, -1):
-        print((num >> i) & 1, end="")
-    print(num & 1)
+    bin_rep = ""
+    for i in range(n-1, -1, -1):
+        bin_rep += str((num >> i) & 1)
+    return bin_rep
 
 
-def print_int_hex(num: int, n: int) -> None:
+def int_hex(num: int, n: int) -> str:
     '''
-    Prints a number as an n-digit hex string.
+    Returns a number as an n-digit hex string.
     '''
     hex_dict = {10: "a", 11: "b", 12: "c", 13: "d", 14: "e", 15: "f"}
     shift = 4 * (n - 1)
-    for i in range(n-1):
+    hex_rep = ""
+    
+    for i in range(n):
         hex_num = (num >> shift) & 15
         hex_num = str(hex_num) if hex_num < 10 else hex_dict[hex_num]
-        print(hex_num, end="")
+        hex_rep += hex_num
         shift -= 4
 
-    hex_num = num & 15
-    hex_num = str(hex_num) if hex_num < 10 else hex_dict[hex_num]
-    print(hex_num)
+    return hex_rep
 
     
 def parse_alu_statement(instr: str, args: str) -> int:
@@ -442,19 +444,72 @@ def parse_all_statements(statements: List[ASMStatement]) -> List[int]:
     return machine_code
 
 
-if __name__ == "__main__":
-    if len(sys.argv) != 2:
+def to_mif_hex(machine_code: List[int], out_fname: str) -> None:
+    '''
+    Creates an Altera .mif file from the machine code for use with Quartus.
+    Data radix is hexadecimal.
+    '''
+    pow2_lst = [0, 1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048,
+                4096, 8192, 16384, 32768]
+
+    machine_code_len = len(machine_code)
+    mem_size_words = 0
+    pc = 0
+
+    if machine_code_len > 32768:
+        print("Error: program too large ({} instructions, max allowed is {})".
+              format(machine_code_len, 32768))
+        sys.exit(1)
+
+    for i in pow2_lst:
+        if machine_code_len <= i:
+            mem_size_words = i * 2 # Give space for data by doubling memory size
+            break
+    
+    with open(out_fname, "w") as out_fname:
+        out_fname.write("DEPTH = {};\n".format(mem_size_words))
+        out_fname.write("WIDTH = 16;\n")
+        out_fname.write("ADDRESS_RADIX = HEX;\n")
+        out_fname.write("DATA_RADIX = HEX;\n")
+        out_fname.write("CONTENT\n")
+        out_fname.write("BEGIN\n")
+        out_fname.write("\n")
+
+        while pc < machine_code_len:
+            out_fname.write("{} : {};\n".format(int_hex(pc, 4),
+                                                int_hex(machine_code[pc], 4)))
+            pc += 1
+
+        while pc < mem_size_words:
+            out_fname.write("{} : 0000;\n".format(int_hex(pc, 4)))
+            pc += 1
+
+        out_fname.write("\n")
+        out_fname.write("END;\n")
+
+
+def main(argc, argv) -> None:
+    if len(argv) != 2:
         print("Usage: cas.py SOURCE")
         sys.exit(1)
         
-    file = open(sys.argv[1])
-    lst = parse_all_statements(collect_labels(remove_all_comments(
-            collect_lines(file))))
-    print(LABELS)
-    for mc in lst:
-        print_int_hex(mc, 4)
-
-
-        
+    # Creates an output file with the same name as the input file, but with a
+    # .mif file extension
+    asm_file_match = ASMSRC_REGEX.match(os.path.basename(os.path.realpath(
+        argv[1])))
     
+    if not asm_file_match:
+        print("Error: file name must only contain {}".format(
+            "alphanumeric characters, underscores, dashes, and periods"))
+        sys.exit(1)
 
+    out_fname = asm_file_match.group(1) + ".mif"
+
+    with open(argv[1]) as file:
+        lst = parse_all_statements(collect_labels(remove_all_comments(
+            collect_lines(file))))
+        to_mif_hex(lst, out_fname)
+        
+
+if __name__ == "__main__":
+    main(len(sys.argv), sys.argv)
