@@ -30,11 +30,10 @@ module crp16_processor (
     wire            wren_a, wren_b, mem_clock, clock, reset;
     wire    [15:0]  hex_in, counter, reg_view, instr_view, pc_view;
     
-    // Clock divider
-    reg     [23:0]  clock_counter = 24'b0;
+    // Clock controller
+    clock_controller    clock_ctrl(CLOCK_50, KEY[2], clock, SW[9:5]);
     
     assign reset = ~KEY[1];
-    assign clock = clock_counter[23];
     
     // Dual port memory
     dual_mem memory (
@@ -69,11 +68,36 @@ module crp16_processor (
     assign hex_in = SW[4] ? counter  :
                     SW[3] ? reg_view : 
                     instr_view;
+
+endmodule
+
+
+/**
+ * Allows scaling and stopping of clock
+ */
+module clock_controller (
+    input           clock_in,
+    input           clock_toggle,
+    output          clock_out,
+    input   [4:0]   scale
+);
     
-    // 2.98 Hz clock
-    always @(posedge CLOCK_50)
+    reg             clock_run = 0;
+    reg     [4:0]   clock_scaler = 0;
+    reg     [30:0]  clock_counter = 0;
+    wire    [31:0]  clock_src = {clock_counter, clock_in};
+    
+    assign          clock_out = clock_src[clock_scaler] & clock_run;
+    
+    always @(posedge clock_in)
     begin
-        clock_counter <= clock_counter + 24'd1;
+        clock_counter <= clock_counter + 31'b1;
+    end
+    
+    always @(posedge clock_toggle)
+    begin
+        clock_scaler <= scale;
+        clock_run <= clock_run ^ 1'b1;
     end
 
 endmodule
