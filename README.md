@@ -84,3 +84,6 @@ The CRP16 (Carl's RISC Processor 16-bit) is my attempt at creating a RISC archit
 
 ### Jan 3, 2018
   - Implemented instruction pipelining
+  
+### Jan 14, 2018
+  - Created an assembler that assembles instructions only using Python 3.6
