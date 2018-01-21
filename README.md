@@ -6,16 +6,33 @@ The CRP16 (Carl's RISC Processor 16-bit) is my attempt at creating a RISC archit
 
 ## Table of Contents
 
-* [Specifications](#specifications)
 * [Instruction Encoding](#instruction-encoding)
 * [Milestones](#milestones)
 
-## Specifications
-- 16-bit instructions
-- 8 16-bit general-purpose registers
-- Word addressable memory
-- Harvard architecture
-- 3-stage pipeline with data forwarding and branch resolve at decode stage for zero pipeline bubbles
+## Architecture
+- 16-bit RISC with 16-bit words and instructions
+- 8 general purpose word-sized registers
+- Load/store architecture, register and immediate addressing modes 
+- Harvard architecture, word-addressable memory
+
+## Microarchitecture
+- 3-stage Fetch, Decode, Execute pipeline
+- Data forwarding from Execute to Decode
+- Early branch resolve at Decode stage with 0 branch penalty
+- 1 cycle memory access latency
+- Performance of up to 100MIPS at 100MHz
+
+## Registers
+| Register | Description |
+| - | - |
+| r0 | subroutine parameter ; subroutine return value ; caller-saved |
+| r1 | subroutine parameter ; caller-saved |
+| r2 | callee-saved |
+| r3 | callee-saved |
+| r4 | callee-saved |
+| r5 | callee-saved |
+| r6 / sp | stack pointer ; callee-saved |
+| r7 / lr | link register ; callee-saved|
 
 ## Instruction Encoding
 
