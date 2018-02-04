@@ -12,7 +12,7 @@
   * [5.4 Conditional jump](#54-conditional-jump)
   * [5.5 Jump](#55-jump)
   * [5.6 Load immediate](#56-load-immediate)
-  * [5.7 Memory load/store word](memory-loadstore-word)
+  * [5.7 Memory load/store word](#57-memory-loadstore-word)
   * [5.8 No operation](#58-no-operation)
   * [5.9 Terminate execution and lock up processor](#59-terminate-execution-and-lock-up-processor)
 * [6. Milestones](#6-milestones)
