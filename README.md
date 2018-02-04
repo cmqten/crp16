@@ -31,7 +31,7 @@ The CRP16 (Carl's RISC Processor 16-bit) is my attempt at creating a RISC archit
 
 ## 5. Instruction Set
 
-### 5.1 ALU Operation
+### 5.1 ALU operation
 
 Perform an arithmetic or logic operation on two values, and store the result in the destination register.
 
@@ -75,6 +75,7 @@ Perform an arithmetic or logic operation on two values, and store the result in 
   * 4-bit immediate for add, subtract, and shift are unsigned
   * 4-bit immediate for bitwise AND, OR, and XOR are sign extended
   * Shift operations ignore the higher 12 bits, only take the lowest significant nibble and treats it as an unsigned number
+<br/>
 
 ### 5.2 Call subroutine
 
@@ -102,6 +103,7 @@ Store the address of the next instruction, which is the return address, in the l
 
 * #### 5.2.4 Additional notes
   * Label offset is calculated by the assembler and must be within the range of 11-bits signed integer
+<br/>
 
 ### 5.3 Compare
 
