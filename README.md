@@ -32,14 +32,57 @@ The CRP16 (Carl's RISC Processor 16-bit) is my attempt at creating a RISC archit
 | r4 | callee-saved |
 | r5 | callee-saved |
 | r6 / sp | stack pointer ; callee-saved |
-| r7 / lr | link register ; callee-saved|
+| r7 / lr | link register ; callee-saved |
+
+## Instruction Set
+
+### ALU Operation
+
+* #### ALU operation on two registers
+| <td colspan=1>**15** <td colspan=1>**14** <td colspan=1>**13** <td colspan=1>**12** <td colspan=1>**11** <td colspan=1>**10** <td colspan=1>**9** <td colspan=1>**8** <td colspan=1>**7** <td colspan=1>**6** <td colspan=1>**5** <td colspan=1>**4** <td colspan=1>**3** <td colspan=1>**2** <td colspan=1>**1** <td colspan=1>**0** |
+|-|
+| Encoding <td colspan=3>Rd <td colspan=3>Ra <td colspan=3>Rb <td colspan=1>0 <td colspan=1>0 <td colspan=3>ALUOp <td colspan=1>1 <td colspan=1>1 |
+| Assembly Syntax <td colspan=16>`ALUop Rd, Ra, Rb` |
+| Action <td colspan=16>Rd := Ra ALUOp Rb |
+| Description <td colspan=16>Perform ALUOp operation on registers Ra and Rb, then store result in register Rd |
+
+* #### ALU operation on a register and a 4-bit immediate
+| <td colspan=1>**15** <td colspan=1>**14** <td colspan=1>**13** <td colspan=1>**12** <td colspan=1>**11** <td colspan=1>**10** <td colspan=1>**9** <td colspan=1>**8** <td colspan=1>**7** <td colspan=1>**6** <td colspan=1>**5** <td colspan=1>**4** <td colspan=1>**3** <td colspan=1>**2** <td colspan=1>**1** <td colspan=1>**0** |
+|-|
+| Encoding <td colspan=3>Rd <td colspan=3>Ra <td colspan=4>4-bit immediate <td colspan=1>1 <td colspan=3>ALUOp <td colspan=1>1 <td colspan=1>1 |
+| Assembly Syntax <td colspan=16>`ALUop Rd, Ra, 4-bit immediate` |
+| Action <td colspan=16>Rd := Ra ALUOp 4-bit immediate |
+| Description <td colspan=16>Perform ALUOp operation on register Ra and 4-bit immediate, then store result in register Rd |
+  
+* #### ALUOp chart
+
+| Assembly instruction | ALUOp encoding| Description |
+| - | - | - |
+| `add` | 000 | Add |
+| `sub` | 001 | Subtract |
+| `srl` | 010 | Logical shift right |
+| `sra` | 011 | Arithmetic shift right |
+| `sll` | 100 | Logical shift left |
+| `and` | 101 | Bitwise AND |
+| `or` | 110 | Bitwise OR | 
+| `xor` | 111 | Bitwise XOR |
+
+* #### Example usage
+  * `add r0, r1, r4` : Add two values stored in registers
+  * `sll r0, r1, 4` : Shift value in register by a 4-bit immediate, decimal literal 
+  * `sub r4, r5, 0b0110` : Subtract a value in register by a 4-bit immediate, binary literal 
+  * `sub r4, r5, 0o11` : Subtract a value in register by a 4-bit immediate, octal literal 
+  * `xor r4, r5, 0xf` : Bitwise XOR a value in register by a 4-bit binary immediate, hexadecimal literal
+
+* #### Additional notes
+  * 4-bit immediate for add, subtract, and shift are unsigned
+  * 4-bit immediate for bitwise AND, OR, and XOR are sign extended
+  * Shift operations ignore the higher 12 bits, only takes the lowest significant nibble and treats it as an unsigned number
 
 ## Instruction Encoding
 
 | Instruction <td colspan=1>**15** <td colspan=1>**14** <td colspan=1>**13** <td colspan=1>**12** <td colspan=1>**11** <td colspan=1>**10** <td colspan=1>**9** <td colspan=1>**8** <td colspan=1>**7** <td colspan=1>**6** <td colspan=1>**5** <td colspan=1>**4** <td colspan=1>**3** <td colspan=1>**2** <td colspan=1>**1** <td colspan=1>**0** |
 | - |
-| ALU Operation 2 registers <td colspan=3>Rd <td colspan=3>Ra <td colspan=3>Rb <td colspan=1>X <td colspan=1>0 <td colspan=3>ALUOp <td colspan=1>1 <td colspan=1>1 |
-| ALU Operation register and immediate <td colspan=3>Rd <td colspan=3>Ra <td colspan=4>4-bit immediate <td colspan=1>1 <td colspan=3>ALUOp <td colspan=1>1 <td colspan=1>1 |
 | Call subroutine at address in register <td colspan=1>X <td colspan=1>X <td colspan=1>X <td colspan=3>Ra <td colspan=1>X <td colspan=1>X <td colspan=1>X <td colspan=1>X <td colspan=1>X <td colspan=1>0 <td colspan=1>1 <td colspan=1>0 <td colspan=1>1 <td colspan=1>0 |
 | Call subroutine at address PC + signed offset <td colspan=11>11-bit offset <td colspan=1>1 <td colspan=1>1 <td colspan=1>0 <td colspan=1>1 <td colspan=1>0 |
 | Compare two registers <td colspan=3>Rd <td colspan=3>Ra <td colspan=3>Rb <td colspan=1>X <td colspan=1>0 <td colspan=1>S <td colspan=1>G <td colspan=1>1 <td colspan=1>0 <td colspan=1>0 |
@@ -67,22 +110,8 @@ The CRP16 (Carl's RISC Processor 16-bit) is my attempt at creating a RISC archit
 | W | Data size : 0 for byte, 1 for word |
 | X | Don't care |
 
-| ALUOp chart | |
-| - | - |
-| 000 | Add |
-| 001 | Subtract |
-| 010 | Logical shift right |
-| 011 | Arithmetic shift right |
-| 100 | Logical shift left |
-| 101 | Bitwise AND |
-| 110 | Bitwise OR | 
-| 111 | Bitwise XOR |
-
 ### Notes
 - ALU and comparison operations are always ```Rd = Ra op Rb/imm```
-- 4-bit immediate for add, subtract, and shift are unsigned
-- 4-bit immediate for and, or, xor are sign extended
-- Shift operations ignore the higher 12 bits, only takes the lowest significant nibble and treats it as an unsigned number
 - Comparison operations put a 1 in the destination register if the comparison is true, 0 otherwise
 
 
