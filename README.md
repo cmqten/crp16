@@ -53,7 +53,7 @@ Perform an arithmetic or logic operation on two values, and store the result in 
   
 * #### 5.1.3 ALUOp encoding table
 
-| Assembly op | ALUOp encoding | Description |
+| Assembly op | ALUOp | Description |
 | - | - | - |
 | `add` | 000 | Add |
 | `sub` | 001 | Subtract |
@@ -112,7 +112,7 @@ Compare two values. If the comparison is true, write 1 to the destination regist
 * #### 5.3.1 Compare two registers
 | <td colspan=1>**15** <td colspan=1>**14** <td colspan=1>**13** <td colspan=1>**12** <td colspan=1>**11** <td colspan=1>**10** <td colspan=1>**9** <td colspan=1>**8** <td colspan=1>**7** <td colspan=1>**6** <td colspan=1>**5** <td colspan=1>**4** <td colspan=1>**3** <td colspan=1>**2** <td colspan=1>**1** <td colspan=1>**0** |
 | - |
-| Encoding <td colspan=3>Rd <td colspan=3>Ra <td colspan=3>Rb <td colspan=1>X <td colspan=1>0 <td colspan=1>S <td colspan=1>G <td colspan=1>1 <td colspan=1>0 <td colspan=1>0 |
+| Encoding <td colspan=3>Rd <td colspan=3>Ra <td colspan=3>Rb <td colspan=1>0 <td colspan=1>0 <td colspan=1>S <td colspan=1>G <td colspan=1>1 <td colspan=1>0 <td colspan=1>0 |
 | Assembly Syntax <td colspan=16>`op Rd, Ra, Rb` |
 | Action <td colspan=16>Rd := Ra op Rb |
 | Description <td colspan=16>Compare registers Ra and Rb, then store the result in register Rd |
@@ -129,10 +129,10 @@ Compare two values. If the comparison is true, write 1 to the destination regist
 
 | Assembly op | S | G | Description |
 | - | - | - | - |
-| gt  | 0 | 1 | Unsigned greater than, 4-bit immediate is zero extended |
-| gts | 1 | 1 | Signed greater than, 4-bit immediate is sign extended |
-| lt  | 0 | 0 | Unsigned less than, 4-bit immediate is zero extended |
-| lts | 1 | 0 | Signed less than, 4-bit immediate is sign extended |
+| `gt`  | 0 | 1 | Unsigned greater than, 4-bit immediate is zero extended |
+| `gts` | 1 | 1 | Signed greater than, 4-bit immediate is sign extended |
+| `lt`  | 0 | 0 | Unsigned less than, 4-bit immediate is zero extended |
+| `lts` | 1 | 0 | Signed less than, 4-bit immediate is sign extended |
 
 * #### 5.3.4 Example usage
   * `lt r0, r1, r4` : Compare two values stored in registers
@@ -140,34 +140,156 @@ Compare two values. If the comparison is true, write 1 to the destination regist
   * `lts r4, r5, 0b0110` : Compare value in register and a 4-bit immediate, binary literal 
   * `gt r4, r5, 0o11` : Compare value in register and a 4-bit immediate, octal literal 
   * `gts r4, r5, 0xf` : Compare value in register and a 4-bit immediate, hexadecimal literal
+<br/>
 
+### 5.4 Conditional jump
 
-## Instruction Encoding
+Jump to address if the value of a register meets the specified condition.
 
-| Instruction <td colspan=1>**15** <td colspan=1>**14** <td colspan=1>**13** <td colspan=1>**12** <td colspan=1>**11** <td colspan=1>**10** <td colspan=1>**9** <td colspan=1>**8** <td colspan=1>**7** <td colspan=1>**6** <td colspan=1>**5** <td colspan=1>**4** <td colspan=1>**3** <td colspan=1>**2** <td colspan=1>**1** <td colspan=1>**0** |
+* #### 5.4.1 Jump to address in register if condition is zero
+| <td colspan=1>**15** <td colspan=1>**14** <td colspan=1>**13** <td colspan=1>**12** <td colspan=1>**11** <td colspan=1>**10** <td colspan=1>**9** <td colspan=1>**8** <td colspan=1>**7** <td colspan=1>**6** <td colspan=1>**5** <td colspan=1>**4** <td colspan=1>**3** <td colspan=1>**2** <td colspan=1>**1** <td colspan=1>**0** |
 | - |
-| Conditional jump to address in register <td colspan=3>Rc <td colspan=3>Ra <td colspan=1>X <td colspan=1>X <td colspan=1>X <td colspan=1>X <td colspan=1>X <td colspan=1>0 <td colspan=1>C <td colspan=1>1 <td colspan=1>1 <td colspan=1>0 |
-| Conditional jump to address PC + signed offset <td colspan=3>Rc <td colspan=8>8-bit offset <td colspan=1>1 <td colspan=1>C <td colspan=1>1 <td colspan=1>1 <td colspan=1>0 |
-| Jump to address in register <td colspan=1>X <td colspan=1>X <td colspan=1>X <td colspan=3>Ra <td colspan=1>X <td colspan=1>X <td colspan=1>X <td colspan=1>X <td colspan=1>X <td colspan=1>0 <td colspan=1>0 <td colspan=1>0 <td colspan=1>1 <td colspan=1>0 |
-| Jump to address PC + signed offset <td colspan=11>11-bit offset <td colspan=1>1 <td colspan=1>0 <td colspan=1>0 <td colspan=1>1 <td colspan=1>0 |
-| Load immediate to register <td colspan=3>Rd <td colspan=8>8-bit immediate <td colspan=1>S <td colspan=1>1 <td colspan=1>0 <td colspan=1>0 <td colspan=1>1 |
-| Load immediate to higher byte of register while preserving lower byte <td colspan=3>Rd <td colspan=8>8-bit immediate <td colspan=1>1 <td colspan=1>0 <td colspan=1>0 <td colspan=1>0 <td colspan=1>1 |
-| Load from memory to register <td colspan=3>Rd <td colspan=3>Ra <td colspan=1>X <td colspan=1>X <td colspan=1>S <td colspan=1>W <td colspan=1>0 <td colspan=1>0 <td colspan=1>0 <td colspan=1>0 <td colspan=1>0 <td colspan=1>1 |
-| Store from register to memory <td colspan=3>Rd <td colspan=3>Ra <td colspan=1>X <td colspan=1>X <td colspan=1>X <td colspan=1>W <td colspan=1>1 <td colspan=1>0 <td colspan=1>0 <td colspan=1>0 <td colspan=1>0 <td colspan=1>1 |
-| Terminate execution <td colspan=1>1 <td colspan=1>0 <td colspan=1>0 <td colspan=1>0 <td colspan=1>0 <td colspan=1>0 <td colspan=1>0 <td colspan=1>0 <td colspan=1>0 <td colspan=1>0 <td colspan=1>0 <td colspan=1>0 <td colspan=1>0 <td colspan=1>0 <td colspan=1>0 <td colspan=1>0 |
+| Encoding <td colspan=3>Rc <td colspan=3>Ra <td colspan=1>0 <td colspan=1>0 <td colspan=1>0 <td colspan=1>0 <td colspan=1>0 <td colspan=1>0 <td colspan=1>0 <td colspan=1>1 <td colspan=1>1 <td colspan=1>0 |
+| Assembly Syntax <td colspan=16>`jez Rc, Ra` |
+| Action <td colspan=16>pc := Ra if Rc is zero |
+| Description <td colspan=16>Jump to address in register Ra if register Rc is zero |
   
-| Symbol Chart | |
-| - | - |
-| ALUOp | ALU select bits |
-| C | Branch condition : 0 for zero, 1 for non-zero |
-| G | Compare : 0 for less than, 1 for greater than |
-| Ra | Operand A register, address register |
-| Rb | Operand B register |
-| Rc | Condition register |
-| Rd | Result destination register, data register |
-| S | Signed operation : 0 for unsigned, 1 for signed |
-| W | Data size : 0 for byte, 1 for word |
-| X | Don't care |
+* #### 5.4.2 Jump to address in register if condition is not zero
+| <td colspan=1>**15** <td colspan=1>**14** <td colspan=1>**13** <td colspan=1>**12** <td colspan=1>**11** <td colspan=1>**10** <td colspan=1>**9** <td colspan=1>**8** <td colspan=1>**7** <td colspan=1>**6** <td colspan=1>**5** <td colspan=1>**4** <td colspan=1>**3** <td colspan=1>**2** <td colspan=1>**1** <td colspan=1>**0** |
+| - |
+| Encoding <td colspan=3>Rc <td colspan=3>Ra <td colspan=1>0 <td colspan=1>0 <td colspan=1>0 <td colspan=1>0 <td colspan=1>0 <td colspan=1>0 <td colspan=1>1 <td colspan=1>1 <td colspan=1>1 <td colspan=1>0 |
+| Assembly Syntax <td colspan=16>`jnz Rc, Ra` |
+| Action <td colspan=16>pc := Ra if Rc is not zero |
+| Description <td colspan=16>Jump to address in register Ra if register Rc is not zero |
+
+* #### 5.4.3 Jump to address in pc + 8-bit signed offset if condition is zero
+| <td colspan=1>**15** <td colspan=1>**14** <td colspan=1>**13** <td colspan=1>**12** <td colspan=1>**11** <td colspan=1>**10** <td colspan=1>**9** <td colspan=1>**8** <td colspan=1>**7** <td colspan=1>**6** <td colspan=1>**5** <td colspan=1>**4** <td colspan=1>**3** <td colspan=1>**2** <td colspan=1>**1** <td colspan=1>**0** |
+| - |
+| Encoding <td colspan=3>Rc <td colspan=8>8-bit offset <td colspan=1>1 <td colspan=1>0 <td colspan=1>1 <td colspan=1>1 <td colspan=1>0 |
+| Assembly Syntax <td colspan=16>`jez Rc, label` |
+| Action <td colspan=16>pc := pc + label offset if Rc is zero |
+| Description <td colspan=16>Jump to pc + 8-bit offset of label from the current address if register Rc is zero |
+  
+* #### 5.4.4 Jump to address in pc + 8-bit signed offset if condition is not zero
+| <td colspan=1>**15** <td colspan=1>**14** <td colspan=1>**13** <td colspan=1>**12** <td colspan=1>**11** <td colspan=1>**10** <td colspan=1>**9** <td colspan=1>**8** <td colspan=1>**7** <td colspan=1>**6** <td colspan=1>**5** <td colspan=1>**4** <td colspan=1>**3** <td colspan=1>**2** <td colspan=1>**1** <td colspan=1>**0** |
+| - |
+| Encoding <td colspan=3>Rc <td colspan=8>8-bit offset <td colspan=1>1 <td colspan=1>1 <td colspan=1>1 <td colspan=1>1 <td colspan=1>0 |
+| Assembly Syntax <td colspan=16>`jnz Rc, label` |
+| Action <td colspan=16>pc := pc + label offset if Rc is not zero |
+| Description <td colspan=16>Jump to pc + 8-bit offset of label from the current address if register Rc is not zero |
+
+* #### 5.4.5 Example usage
+  * `jez r0, lr` : Jump to address in register if condition register is zero
+  * `jnz r1, label_a` : Jump to label if condition register is not zero
+
+* #### 5.4.6 Additional notes
+  * Label offset is calculated by the assembler and must be within the range of 8-bits signed integer
+<br/>
+
+### 5.5 Unconditional jump
+
+Jump to address.
+
+* #### 5.5.1 Jump to address in register
+| <td colspan=1>**15** <td colspan=1>**14** <td colspan=1>**13** <td colspan=1>**12** <td colspan=1>**11** <td colspan=1>**10** <td colspan=1>**9** <td colspan=1>**8** <td colspan=1>**7** <td colspan=1>**6** <td colspan=1>**5** <td colspan=1>**4** <td colspan=1>**3** <td colspan=1>**2** <td colspan=1>**1** <td colspan=1>**0** |
+| - |
+| Encoding <td colspan=1>0 <td colspan=1>0 <td colspan=1>0 <td colspan=3>Ra <td colspan=1>0 <td colspan=1>0 <td colspan=1>0 <td colspan=1>0 <td colspan=1>0 <td colspan=1>0 <td colspan=1>0 <td colspan=1>0 <td colspan=1>1 <td colspan=1>0 |
+| Assembly Syntax <td colspan=16>`jmp Ra` |
+| Action <td colspan=16>pc := Ra |
+| Description <td colspan=16>Jump to address in register Ra |
+  
+* #### 5.5.2 Jump to address in pc + 11-bit signed offset
+| <td colspan=1>**15** <td colspan=1>**14** <td colspan=1>**13** <td colspan=1>**12** <td colspan=1>**11** <td colspan=1>**10** <td colspan=1>**9** <td colspan=1>**8** <td colspan=1>**7** <td colspan=1>**6** <td colspan=1>**5** <td colspan=1>**4** <td colspan=1>**3** <td colspan=1>**2** <td colspan=1>**1** <td colspan=1>**0** |
+| - |
+| Encoding <td colspan=11>11-bit offset <td colspan=1>1 <td colspan=1>0 <td colspan=1>0 <td colspan=1>1 <td colspan=1>0 |
+| Assembly Syntax <td colspan=16>`jmp label` |
+| Action <td colspan=16>pc := pc + label offset |
+| Description <td colspan=16>Jump to pc + 11-bit offset of label from the current address |
+
+* #### 5.5.3 Example usage
+  * `jmp lr` : Jump to address in register 
+  * `jmp label_a` : Jump to label 
+
+* #### 5.5.4 Additional notes
+  * Label offset is calculated by the assembler and must be within the range of 11-bits signed integer
+<br/>
+
+### 5.6 Load immediate
+
+Load an immediate value to register.
+
+* #### 5.6.1 Load an unsigned 8-bit immediate value 
+| <td colspan=1>**15** <td colspan=1>**14** <td colspan=1>**13** <td colspan=1>**12** <td colspan=1>**11** <td colspan=1>**10** <td colspan=1>**9** <td colspan=1>**8** <td colspan=1>**7** <td colspan=1>**6** <td colspan=1>**5** <td colspan=1>**4** <td colspan=1>**3** <td colspan=1>**2** <td colspan=1>**1** <td colspan=1>**0** |
+| - |
+| Encoding <td colspan=3>Rd <td colspan=8>8-bit immediate <td colspan=1>0 <td colspan=1>1 <td colspan=1>0 <td colspan=1>0 <td colspan=1>1 |
+| Assembly Syntax <td colspan=16>`ldi Rd, 8-bit immediate` |
+| Action <td colspan=16>Rd := 8-bit immediate |
+| Description <td colspan=16>Load an 8-bit zero extended immediate value to register |
+  
+* #### 5.6.2 Load a signed 8-bit immediate value 
+| <td colspan=1>**15** <td colspan=1>**14** <td colspan=1>**13** <td colspan=1>**12** <td colspan=1>**11** <td colspan=1>**10** <td colspan=1>**9** <td colspan=1>**8** <td colspan=1>**7** <td colspan=1>**6** <td colspan=1>**5** <td colspan=1>**4** <td colspan=1>**3** <td colspan=1>**2** <td colspan=1>**1** <td colspan=1>**0** |
+| - |
+| Encoding <td colspan=3>Rd <td colspan=8>8-bit immediate <td colspan=1>1 <td colspan=1>1 <td colspan=1>0 <td colspan=1>0 <td colspan=1>1 |
+| Assembly Syntax <td colspan=16>`ldsi Rd, 8-bit immediate` |
+| Action <td colspan=16>Rd := 8-bit immediate |
+| Description <td colspan=16>Load an 8-bit sign extended immediate value to register |
+
+* #### 5.6.3 Load an 8-bit immediate value to the higher byte of a register
+| <td colspan=1>**15** <td colspan=1>**14** <td colspan=1>**13** <td colspan=1>**12** <td colspan=1>**11** <td colspan=1>**10** <td colspan=1>**9** <td colspan=1>**8** <td colspan=1>**7** <td colspan=1>**6** <td colspan=1>**5** <td colspan=1>**4** <td colspan=1>**3** <td colspan=1>**2** <td colspan=1>**1** <td colspan=1>**0** |
+| - |
+| Encoding <td colspan=3>Rd <td colspan=8>8-bit immediate <td colspan=1>1 <td colspan=1>0 <td colspan=1>0 <td colspan=1>0 <td colspan=1>1 |
+| Assembly Syntax <td colspan=16>`ldhi Rd, 8-bit immediate` |
+| Action <td colspan=16>Rd := 8-bit immediate concatenated with Rd[7:0] |
+| Description <td colspan=16>Load an 8-bit immediate value to the higher byte of a register while preserving the lower byte |
+  
+* #### 5.6.4 Example usage
+  * `ldi r0, 56` : Load an 8-bit immediate, decimal literal 
+  * `ldsi r0, 0b1011` : Load an 8-bit immediate, binary literal 
+  * `ldhi r0, 0o77` : Load an 8-bit immediate, 0ctal literal 
+  * `ldsi r0, 0xff` : Load an 8-bit immediate, hexadecimal literal  
+<br/>
+
+### 5.7 Memory load/store word
+
+Load word from memory or store word to memory.
+
+* #### 5.7.1 Load word from memory
+
+| <td colspan=1>**15** <td colspan=1>**14** <td colspan=1>**13** <td colspan=1>**12** <td colspan=1>**11** <td colspan=1>**10** <td colspan=1>**9** <td colspan=1>**8** <td colspan=1>**7** <td colspan=1>**6** <td colspan=1>**5** <td colspan=1>**4** <td colspan=1>**3** <td colspan=1>**2** <td colspan=1>**1** <td colspan=1>**0** |
+| - |
+| Encoding <td colspan=3>Rd <td colspan=3>Ra <td colspan=1>0 <td colspan=1>0 <td colspan=1>0 <td colspan=1>1 <td colspan=1>0 <td colspan=1>0 <td colspan=1>0 <td colspan=1>0 <td colspan=1>0 <td colspan=1>1 |
+| Assembly Syntax <td colspan=16>`ldw Rd, Ra` |
+| Action <td colspan=16>Rd := *Ra |
+| Description <td colspan=16>Load data from memory address in register Ra to register Rd |
+
+* #### 5.7.2 Store word to memory
+
+| <td colspan=1>**15** <td colspan=1>**14** <td colspan=1>**13** <td colspan=1>**12** <td colspan=1>**11** <td colspan=1>**10** <td colspan=1>**9** <td colspan=1>**8** <td colspan=1>**7** <td colspan=1>**6** <td colspan=1>**5** <td colspan=1>**4** <td colspan=1>**3** <td colspan=1>**2** <td colspan=1>**1** <td colspan=1>**0** |
+| - |
+| Encoding <td colspan=3>Rd <td colspan=3>Ra <td colspan=1>0 <td colspan=1>0 <td colspan=1>0 <td colspan=1>1 <td colspan=1>1 <td colspan=1>0 <td colspan=1>0 <td colspan=1>0 <td colspan=1>0 <td colspan=1>1 |
+| Assembly Syntax <td colspan=16>`stw Rd, Ra` |
+| Action <td colspan=16>*Ra := Rd |
+| Description <td colspan=16>Store data from register Rd to memory address in register Ra |
+
+* #### 5.7.3 Example usage
+  * `ldw r0, r1` : Load word from address in r1 to r0
+  * `stw r0, r1` : Store word from r0 to address in r1
+<br/>
+
+### 5.8 No operation
+
+| <td colspan=1>**15** <td colspan=1>**14** <td colspan=1>**13** <td colspan=1>**12** <td colspan=1>**11** <td colspan=1>**10** <td colspan=1>**9** <td colspan=1>**8** <td colspan=1>**7** <td colspan=1>**6** <td colspan=1>**5** <td colspan=1>**4** <td colspan=1>**3** <td colspan=1>**2** <td colspan=1>**1** <td colspan=1>**0** |
+| - |
+| Encoding <td colspan=1>0 <td colspan=1>0 <td colspan=1>0 <td colspan=1>0 <td colspan=1>0 <td colspan=1>0 <td colspan=1>0 <td colspan=1>0 <td colspan=1>0 <td colspan=1>0 <td colspan=1>0 <td colspan=1>0 <td colspan=1>0 <td colspan=1>0 <td colspan=1>0 <td colspan=1>0 |
+| Assembly Syntax <td colspan=16>`noop` |
+<br/>  
+
+### 5.9 Terminate execution and lock up processor
+
+| <td colspan=1>**15** <td colspan=1>**14** <td colspan=1>**13** <td colspan=1>**12** <td colspan=1>**11** <td colspan=1>**10** <td colspan=1>**9** <td colspan=1>**8** <td colspan=1>**7** <td colspan=1>**6** <td colspan=1>**5** <td colspan=1>**4** <td colspan=1>**3** <td colspan=1>**2** <td colspan=1>**1** <td colspan=1>**0** |
+| - |
+| Encoding <td colspan=1>1 <td colspan=1>0 <td colspan=1>0 <td colspan=1>0 <td colspan=1>0 <td colspan=1>0 <td colspan=1>0 <td colspan=1>0 <td colspan=1>0 <td colspan=1>0 <td colspan=1>0 <td colspan=1>0 <td colspan=1>0 <td colspan=1>0 <td colspan=1>0 <td colspan=1>0 |
+| Assembly Syntax <td colspan=16>`stop` |
 
 ## 6. Milestones
 
