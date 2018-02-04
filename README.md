@@ -1,5 +1,22 @@
 # CRP16
 
+## 0. Table of Contents
+* [1. About](#1-about)
+* [2. Architecture](#2-architecture)
+* [3. Microarchitecture](#3-microarchitecture)
+* [4. Registers](#4-registers)
+* [5. Instruction Set](#5-instruction-set)
+  * [5.1 ALU operation](#51-alu-operation)
+  * [5.2 Call subroutine](#52-call-subroutine)
+  * [5.3 Compare](#53-compare)
+  * [5.4 Conditional jump](#54-conditional-jump)
+  * [5.5 Jump](#55-jump)
+  * [5.6 Load immediate](#56-load-immediate)
+  * [5.7 Memory load/store word](memory-loadstore-word)
+  * [5.8 No operation](#58-no-operation)
+  * [5.9 Terminate execution and lock up processor](#59-terminate-execution-and-lock-up-processor)
+* [6. Milestones](#6-milestones)
+
 ## 1. About
 
 The CRP16 (Carl's RISC Processor 16-bit) is my attempt at creating a RISC architecture processor with Verilog and a DE1-SoC (5CSEMA5F31C6N) board.
@@ -186,7 +203,7 @@ Jump to address if the value of a register meets the specified condition.
   * Label offset is calculated by the assembler and must be within the range of 8-bits signed integer
 <br/>
 
-### 5.5 Unconditional jump
+### 5.5 Jump
 
 Jump to address.
 
@@ -290,6 +307,7 @@ Load word from memory or store word to memory.
 | - |
 | Encoding <td colspan=1>1 <td colspan=1>0 <td colspan=1>0 <td colspan=1>0 <td colspan=1>0 <td colspan=1>0 <td colspan=1>0 <td colspan=1>0 <td colspan=1>0 <td colspan=1>0 <td colspan=1>0 <td colspan=1>0 <td colspan=1>0 <td colspan=1>0 <td colspan=1>0 <td colspan=1>0 |
 | Assembly Syntax <td colspan=16>`stop` |
+<br/>
 
 ## 6. Milestones
 
