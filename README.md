@@ -1,3 +1,31 @@
+# ITTIBT32
+
+ITTIBT32 (**I** **T**hought of **T**his **I**SA **B**efore a **T**est,
+pronounced "itty-bitty") is a 32-bit RISC ISA with the goal of being:
+* Simple : Instructions that do one thing and one thing only
+* Compact : 16-bit instruction encoding
+
+## 1. Instruction Set Architecture Details
+
+* 32-bit word size
+* 16-bit instruction encoding
+* Little endian byte order
+* 16 32-bit general-purpose registers
+
+## 2. Registers
+
+| Register | Description |
+| - | - |
+| r0 | subroutine parameter ; subroutine return value ; caller-saved |
+| r1 - r3 | subroutine parameter ; caller-saved |
+| r4 - r7 | caller-saved |
+| r8 - r13 | callee-saved |
+| r14 / sp | stack pointer ; callee-saved |
+| r15 / lr | link register ; callee-saved |
+
+## 3. Instruction Set
+
+<!---
 # CRP16
 
 ## 0. Table of Contents
@@ -327,3 +355,4 @@ Load word from memory or store word to memory.
   
 ### Jan 14, 2018
   - Created an assembler that assembles instructions only using Python 3.6
+--->
